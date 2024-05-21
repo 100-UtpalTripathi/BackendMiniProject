@@ -3,7 +3,7 @@ Functional Requirements:
 1. Admin Module:
 	a. Login / Logout
 	b. Add a new User : Main Admin can add another Admin, admin cannot sign up.
-	c. Manage City
+	c. Manage Cities
 	d. Add a new Car
 	e. Edit/delete existing car
 	f. Contact Us Queries
