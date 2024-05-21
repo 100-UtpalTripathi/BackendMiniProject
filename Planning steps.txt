@@ -1,0 +1,43 @@
+1. Project Setup and Planning:
+	Creating new ASP.net Core Project,and decide on the organization of folders/modules
+	 within the project for better maintainability.
+
+
+2. Database Design:
+	database schema using Code First approach in Entity Framework Core.
+	data validation and constraints at the database level using Fluent API 
+	or Data Annotations.
+
+
+3. Repository Design Pattern:
+	Implement the repository pattern to abstract data access logic.
+	Creating repositories for each entity to encapsulate CRUD operations.
+
+4. Business Logic Layer:
+	Implement the business Logic for different Entities and reuqirements.
+
+
+5. Authentication and Authorization:
+
+	Implement authentication mechanisms such as JWT (JSON Web Tokens)
+	Define roles and permissions for users to restrict access to certain functionalities.
+	Ensure that sensitive endpoints are protected from unauthorized access.
+
+6. DTOs (Data Transfer Objects):
+
+	Create DTOs to transfer data between layers of the application.
+
+7. Validation:
+
+	Implement validation logic to ensure data integrity and consistency.
+	Use data annotations, Fluent Validation, or custom validation attributes to validate user inputs.
+
+8. Creating various Endpoints Controllers:
+
+9. Postman Workspace Setup:
+
+	Set up a Postman workspace for testing API endpoints.
+
+10. Unit Testing:
+
+	Write unit tests to validate the functionality of individual components, such as controllers, services, and repositories.
