@@ -1,3 +1,4 @@
+
 Functional Requirements:
 
 1. Admin Module:
@@ -42,7 +43,21 @@ Functional Requirements:
 
 	e. View Bookings:
 	Customers can view details of previous and upcoming bookings.
+	
+	f. Cancel Bookings:
+	Customers can cancel bookings.
 
-	f. Manage Profile:
+	g. Manage Profile:
 	Customers can edit their profile details such as email, phone number, and address.
+
+ 
+Logics related to discounts : 
+1. Seasonal Discount: 10% off in December month
+2. Loyalty Discount: 5% off for customers with more than 5 bookings
+
+
+Logics related to cancellation charges : 
+1. If the customer cancels 48 hours or more before the booking start date, no cancellation fee is applied.
+2. If the customer cancels within 48 hours of the booking start date, a cancellation fee is charged. 
+	cancellation fee will be dynamic like based on no. of hours after the free cancellation booking start date.
 
