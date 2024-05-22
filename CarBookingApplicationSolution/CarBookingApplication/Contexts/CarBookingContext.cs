@@ -42,7 +42,18 @@ namespace CarBookingApplication.Contexts
                 .WithMany(c => c.Queries)
                 .HasForeignKey(q => q.CustomerId);
 
-            
+            modelBuilder.Entity<Booking>()
+                .Property(b => b.TotalAmount)
+                .HasColumnType("decimal(18, 2)");
+
+            modelBuilder.Entity<Booking>()
+                .Property(b => b.DiscountAmount)
+                .HasColumnType("decimal(18, 2)");   
+
+            modelBuilder.Entity<Booking>() 
+                .Property(b => b.FinalAmount)
+                .HasColumnType("decimal(18, 2)");
+
         }
     }
 }
