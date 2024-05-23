@@ -54,6 +54,10 @@ namespace CarBookingApplication.Contexts
                 .Property(b => b.FinalAmount)
                 .HasColumnType("decimal(18, 2)");
 
+            modelBuilder.Entity<Customer>()
+                .HasIndex(c => c.Email) // Create index on Email property
+                .IsUnique(); // Ensure uniqueness of Email property
+
         }
     }
 }
