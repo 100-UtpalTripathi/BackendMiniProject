@@ -3,8 +3,6 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CarBookingApplication.Models
 {
-    
-
     public class Car
     {
         public int Id { get; set; }
@@ -29,6 +27,18 @@ namespace CarBookingApplication.Models
         [Required(ErrorMessage = "Status is required.")]
         [RegularExpression("^(Available|Booked|Maintenance)$", ErrorMessage = "Status must be either 'Available', 'Booked', or 'Maintenance'.")]
         public string Status { get; set; } // e.g., "Available", "Booked", "Maintenance"
+
+        [Required(ErrorMessage = "Transmission is required.")]
+        [RegularExpression("^(Manual|Automatic)$", ErrorMessage = "Transmission must be either 'Manual' or 'Automatic'.")]
+        public string Transmission { get; set; }
+
+        [Required(ErrorMessage = "Number of seats is required.")]
+        [Range(1, 20, ErrorMessage = "Number of seats must be between 1 and 20.")]
+        public int NumberOfSeats { get; set; }
+
+        [Required(ErrorMessage = "Category is required.")]
+        [RegularExpression("^(Small|Medium|Large|SUV|Premium)$", ErrorMessage = "Category must be one of the following: 'Small', 'Medium', 'Large', 'SUV', 'Premium'.")]
+        public string Category { get; set; }
 
         public ICollection<Booking>? Bookings { get; set; }
     }
