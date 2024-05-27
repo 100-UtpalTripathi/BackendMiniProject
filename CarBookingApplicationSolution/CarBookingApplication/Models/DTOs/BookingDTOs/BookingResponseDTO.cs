@@ -2,5 +2,7 @@
 {
     public class BookingResponseDTO
     {
+        public string Message { get; set; }
+        public bool Success { get; set; }
     }
 }

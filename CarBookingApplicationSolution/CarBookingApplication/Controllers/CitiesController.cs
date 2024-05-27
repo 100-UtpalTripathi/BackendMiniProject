@@ -30,7 +30,7 @@ namespace CarBookingApplication.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> EditCity(int id, [FromBody] CityDTO cityDto)
+        public async Task<ActionResult> EditCity(int id, [FromBody] CityDTO cityDto)
         {
             var result = await _cityService.EditCityAsync(id, cityDto);
             if (result.Success)
@@ -41,7 +41,7 @@ namespace CarBookingApplication.Controllers
         }
 
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCity(int id)
+        public async Task<ActionResult> DeleteCity(int id)
         {
             var result = await _cityService.DeleteCityAsync(id);
             if (result.Success)
@@ -53,7 +53,7 @@ namespace CarBookingApplication.Controllers
 
 
         [HttpGet]
-        public async Task<IActionResult> GetAllCities()
+        public async Task<ActionResult> GetAllCities()
         {
             var cities = await _cityService.GetAllCitiesAsync();
             return Ok(cities);

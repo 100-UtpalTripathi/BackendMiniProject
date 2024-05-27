@@ -6,7 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace CarBookingApplication.Controllers
 {
-    [Authorize(Roles = "Admin")]
+    
     [ApiController]
     [Route("api/[controller]")]
     public class CarsController : ControllerBase
@@ -18,14 +18,10 @@ namespace CarBookingApplication.Controllers
             _carService = carService;
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPost]
-        public async Task<IActionResult> AddCar([FromBody] CarDTO carDto)
+        public async Task<ActionResult<CarResponseDTO>> AddCar([FromBody] CarDTO carDto)
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             var result = await _carService.AddCarAsync(carDto);
             if (result.Success)
             {
@@ -34,8 +30,9 @@ namespace CarBookingApplication.Controllers
             return BadRequest(result);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
-        public async Task<IActionResult> EditCar(int id, [FromBody] CarDTO carDto)
+        public async Task<ActionResult<CarResponseDTO>> EditCar(int id, [FromBody] CarDTO carDto)
         {
             if (!ModelState.IsValid)
             {
@@ -50,8 +47,9 @@ namespace CarBookingApplication.Controllers
             return BadRequest(result);
         }
 
+        [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteCar(int id)
+        public async Task<ActionResult<CarResponseDTO>> DeleteCar(int id)
         {
             var result = await _carService.DeleteCarAsync(id);
             if (result.Success)
@@ -62,7 +60,7 @@ namespace CarBookingApplication.Controllers
         }
 
         [HttpGet]
-        public async Task<IActionResult> GetAllCars()
+        public async Task<ActionResult<IList<CarDTO>>> GetAllCars()
         {
             var cars = await _carService.GetAllCarsAsync();
             return Ok(cars);

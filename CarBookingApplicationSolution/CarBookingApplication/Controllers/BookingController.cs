@@ -11,7 +11,6 @@ using System.Security.Claims;
 
 namespace CarBookingApplication.Controllers
 {
-
     [ApiController]
     [Route("api/[controller]")]
     public class BookingController : ControllerBase
@@ -23,17 +22,22 @@ namespace CarBookingApplication.Controllers
             _bookingService = bookingService;
         }
 
+        /// <summary>
+        /// Get all bookings (Admin only)
+        /// </summary>
+        /// <returns>List of bookings</returns>
         [Authorize(Roles = "Admin")]
         [HttpGet]
-        public async Task<IActionResult> GetAllBookings()
+        [ProducesResponseType(typeof(IList<Booking>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<IList<Booking>>> GetAllBookings()
         {
-
             try
             {
                 var customerId = User.FindFirstValue("eid");
                 if (customerId == null)
                 {
-
                     throw new NotLoggedInException("User is not logged in.");
                 }
 
@@ -50,19 +54,27 @@ namespace CarBookingApplication.Controllers
             }
         }
 
+        /// <summary>
+        /// Get booking by ID
+        /// </summary>
+        /// <param name="id">Booking ID</param>
+        /// <returns>Booking details</returns>
+        [Authorize]
         [HttpGet("{id}")]
-        public async Task<IActionResult> GetBookingById(int id)
+        [ProducesResponseType(typeof(Booking), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<Booking>> GetBookingById(int id)
         {
             try
             {
                 var customerId = User.FindFirstValue("eid");
                 if (customerId == null)
                 {
-
                     throw new NotLoggedInException("User is not logged in.");
                 }
 
-                var booking = await _bookingService.GetBookingByIdAsync(id, customerId);
+                var booking = await _bookingService.GetBookingByIdAsync(id, int.Parse(customerId));
                 return Ok(booking);
             }
             catch (NotLoggedInException ex)
@@ -75,27 +87,73 @@ namespace CarBookingApplication.Controllers
             }
         }
 
+        /// <summary>
+        /// Cancel a booking
+        /// </summary>
+        /// <param name="BookingId">Booking ID</param>
+        /// <returns>Cancellation result</returns>
+        [Authorize]
         [HttpPut("{id}/cancel")]
-        public async Task<IActionResult> CancelBooking(int id)
+        [ProducesResponseType(typeof(BookingResponseDTO), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(BookingResponseDTO), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<BookingResponseDTO>> CancelBooking(int BookingId)
         {
-            var result = await _bookingService.CancelBookingAsync(id);
-            if (result.Success)
+            try
             {
-                return Ok(result);
+                var customerId = User.FindFirstValue("eid");
+                if (customerId == null)
+                {
+                    throw new NotLoggedInException("User is not logged in.");
+                }
+
+                var result = await _bookingService.CancelBookingAsync(BookingId, int.Parse(customerId));
+                if (result.Success)
+                {
+                    return Ok(result);
+                }
+                else
+                {
+                    return BadRequest(result);
+                }
             }
-            return BadRequest(result);
+            catch (NotLoggedInException ex)
+            {
+                return Unauthorized(new ErrorModel(401, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ErrorModel(500, ex.Message));
+            }
         }
 
-        [HttpPut("{id}/issue")]
-        public async Task<IActionResult> HandleBookingIssue(int id, [FromBody] string issueDetails)
+        /// <summary>
+        /// Book a car
+        /// </summary>
+        /// <param name="bookingRequest">Booking request details</param>
+        /// <returns>Booking result</returns>
+        [Authorize]
+        [HttpPost("book")]
+        [ProducesResponseType(typeof(BookingDTO), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<BookingResponseDTO>> BookCar([FromBody] BookingDTO bookingRequest)
         {
-            var result = await _bookingService.HandleBookingIssueAsync(id, issueDetails);
-            if (result.Success)
+            try
             {
+                var customerId = User.FindFirstValue("eid");
+                if (customerId == null)
+                {
+                    throw new NotLoggedInException("User is not logged in.");
+                }
+
+                var result = await _bookingService.BookCarAsync(int.Parse(customerId), bookingRequest);
                 return Ok(result);
             }
-            return BadRequest(result);
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new ErrorModel(500, ex.Message));
+            }
         }
     }
-
 }

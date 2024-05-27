@@ -23,6 +23,7 @@ namespace CarBookingApplication.Controllers
             _queryService = queryService;
         }
 
+        [Authorize]
         [HttpPost]
         public async Task<IActionResult> SubmitQuery([FromBody] QueryDTO queryDto)
         {
@@ -56,7 +57,8 @@ namespace CarBookingApplication.Controllers
             return Ok(queries);
         }
 
-        
+
+        [Authorize]
         [HttpGet("{id}")]
         public async Task<IActionResult> GetQueryById(int id)
         {
