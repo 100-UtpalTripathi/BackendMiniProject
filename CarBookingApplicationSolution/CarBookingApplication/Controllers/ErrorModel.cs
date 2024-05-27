@@ -1,4 +1,4 @@
-﻿namespace EmployeeRequestTrackerAPI.Models
+﻿namespace CarBookingApplication.Models
 {
     public class ErrorModel
     {

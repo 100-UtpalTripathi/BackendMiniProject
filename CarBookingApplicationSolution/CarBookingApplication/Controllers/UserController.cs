@@ -1,7 +1,7 @@
 ﻿using CarBookingApplication.Interfaces;
 using CarBookingApplication.Models;
 using CarBookingApplication.Models.DTOs.UserDTOs;
-using EmployeeRequestTrackerAPI.Models;
+using CarBookingApplication.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 

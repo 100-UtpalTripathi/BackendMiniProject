@@ -20,7 +20,7 @@ namespace CarBookingApplication.Models
         public string Message { get; set; }
 
         [StringLength(1000, ErrorMessage = "Response can't be longer than 1000 characters.")]
-        public string Response { get; set; }
+        public string? Response { get; set; }
 
         [Required(ErrorMessage = "Status is required.")]
         [RegularExpression("^(Open|Closed)$", ErrorMessage = "Status must be either 'Open' or 'Closed'.")]
@@ -29,6 +29,8 @@ namespace CarBookingApplication.Models
         [Required(ErrorMessage = "Created Date is required.")]
         [DataType(DataType.DateTime, ErrorMessage = "Invalid date format.")]
         public DateTime CreatedDate { get; set; }
+
+        public DateTime? UpdatedDate { get; set; }
 
     }
 }

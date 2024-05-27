@@ -95,6 +95,9 @@ namespace CarBookingApplication
             #region Services
             builder.Services.AddScoped<ITokenService, TokenService>();
             builder.Services.AddScoped<IUserService, UserService>();
+            builder.Services.AddScoped<ICityService, CityService>();
+            builder.Services.AddScoped<IQueryService, QueryService>();
+            builder.Services.AddScoped<ICarService, CarService>();
 
             #endregion
 
