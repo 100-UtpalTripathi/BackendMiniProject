@@ -4,6 +4,7 @@ using CarBookingApplication.Interfaces;
 using CarBookingApplication.Models;
 using CarBookingApplication.Repositories;
 using CarBookingApplication.Services;
+using EmployeeRequestTrackerAPI.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
@@ -82,9 +83,19 @@ namespace CarBookingApplication
             #endregion
 
             #region Repositories
+            builder.Services.AddScoped<IRepository<int, City>, CityRepository>();
+            builder.Services.AddScoped<IRepository<int, Customer>, CustomerRepository>();
+            builder.Services.AddScoped<IRepository<int, Query>, QueryRepository>();
+            builder.Services.AddScoped<IRepository<int, Car>, CarRepository>();
+            builder.Services.AddScoped<IRepository<int, Booking>, BookingRepository>();
+            builder.Services.AddScoped<IRepository<int, User>, UserRepository>();
+
             #endregion
 
             #region Services
+            builder.Services.AddScoped<ITokenService, TokenService>();
+            builder.Services.AddScoped<IUserService, UserService>();
+
             #endregion
 
             var app = builder.Build();

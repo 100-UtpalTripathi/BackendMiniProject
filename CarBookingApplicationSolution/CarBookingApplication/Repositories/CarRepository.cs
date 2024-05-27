@@ -4,7 +4,7 @@ using CarBookingApplication.Interfaces;
 using CarBookingApplication.Models;
 using Microsoft.EntityFrameworkCore;
 
-namespace CarCarApplication.Repositories
+namespace CarBookingApplication.Repositories
 {
     public class CarRepository : IRepository<int, Car>
     {
