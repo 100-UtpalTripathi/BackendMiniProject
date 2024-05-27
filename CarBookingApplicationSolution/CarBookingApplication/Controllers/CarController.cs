@@ -3,10 +3,13 @@ using CarBookingApplication.Models.DTOs.CarDTOs;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using CarBookingApplication.Exceptions;
+using System;
+using CarBookingApplication.Models;
+using CarBookingApplication.Exceptions.Car;
 
 namespace CarBookingApplication.Controllers
 {
-    
     [ApiController]
     [Route("api/[controller]")]
     public class CarsController : ControllerBase
@@ -18,53 +21,121 @@ namespace CarBookingApplication.Controllers
             _carService = carService;
         }
 
+        /// <summary>
+        /// Add a new car (Admin only)
+        /// </summary>
+        /// <param name="carDto">Car details</param>
+        /// <returns>Car addition result</returns>
         [Authorize(Roles = "Admin")]
         [HttpPost]
+        [ProducesResponseType(typeof(CarResponseDTO), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(CarResponseDTO), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<CarResponseDTO>> AddCar([FromBody] CarDTO carDto)
         {
-            var result = await _carService.AddCarAsync(carDto);
-            if (result.Success)
+            try
             {
-                return Ok(result);
+                var result = await _carService.AddCarAsync(carDto);
+                if (result.Success)
+                {
+                    return Ok(result);
+                }
+                return BadRequest(result);
             }
-            return BadRequest(result);
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new ErrorModel(500, ex.Message));
+            }
         }
 
+        /// <summary>
+        /// Edit an existing car (Admin only)
+        /// </summary>
+        /// <param name="id">Car ID</param>
+        /// <param name="carDto">Updated car details</param>
+        /// <returns>Car update result</returns>
         [Authorize(Roles = "Admin")]
         [HttpPut("{id}")]
+        [ProducesResponseType(typeof(CarResponseDTO), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(CarResponseDTO), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<CarResponseDTO>> EditCar(int id, [FromBody] CarDTO carDto)
         {
-            if (!ModelState.IsValid)
+            try
             {
-                return BadRequest(ModelState);
-            }
+                if (!ModelState.IsValid)
+                {
+                    return BadRequest(ModelState);
+                }
 
-            var result = await _carService.EditCarAsync(id, carDto);
-            if (result.Success)
-            {
-                return Ok(result);
+                var result = await _carService.EditCarAsync(id, carDto);
+                if (result.Success)
+                {
+                    return Ok(result);
+                }
+                return BadRequest(result);
             }
-            return BadRequest(result);
+            catch (NoSuchCarFoundException ex)
+            {
+                return NotFound(new ErrorModel(404, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new ErrorModel(500, ex.Message));
+            }
         }
 
+        /// <summary>
+        /// Delete a car (Admin only)
+        /// </summary>
+        /// <param name="id">Car ID</param>
+        /// <returns>Car deletion result</returns>
         [Authorize(Roles = "Admin")]
         [HttpDelete("{id}")]
+        [ProducesResponseType(typeof(CarResponseDTO), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(CarResponseDTO), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<CarResponseDTO>> DeleteCar(int id)
         {
-            var result = await _carService.DeleteCarAsync(id);
-            if (result.Success)
+            try
             {
-                return Ok(result);
+                var result = await _carService.DeleteCarAsync(id);
+                if (result.Success)
+                {
+                    return Ok(result);
+                }
+                return BadRequest(result);
             }
-            return BadRequest(result);
+            catch (NoSuchCarFoundException ex)
+            {
+                return NotFound(new ErrorModel(404, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new ErrorModel(500, ex.Message));
+            }
         }
 
+        /// <summary>
+        /// Get all cars
+        /// </summary>
+        /// <returns>List of cars</returns>
         [HttpGet]
+        [ProducesResponseType(typeof(IList<CarDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<IList<CarDTO>>> GetAllCars()
         {
-            var cars = await _carService.GetAllCarsAsync();
-            return Ok(cars);
+            try
+            {
+                var cars = await _carService.GetAllCarsAsync();
+                return Ok(cars);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new ErrorModel(500, ex.Message));
+            }
         }
     }
-
 }

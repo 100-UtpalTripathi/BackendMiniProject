@@ -23,8 +23,16 @@ namespace CarBookingApplication.Controllers
             _queryService = queryService;
         }
 
+        /// <summary>
+        /// Submit a new query (Authenticated users only)
+        /// </summary>
+        /// <param name="queryDto">Query details</param>
+        /// <returns>Query submission result</returns>
         [Authorize]
         [HttpPost]
+        [ProducesResponseType(typeof(QueryResponseDTO), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> SubmitQuery([FromBody] QueryDTO queryDto)
         {
             try
@@ -32,7 +40,6 @@ namespace CarBookingApplication.Controllers
                 var customerId = User.FindFirstValue("eid");
                 if (customerId == null)
                 {
-
                     throw new NotLoggedInException("User is not logged in.");
                 }
 
@@ -49,17 +56,38 @@ namespace CarBookingApplication.Controllers
             }
         }
 
+        /// <summary>
+        /// Get all queries (Admin only)
+        /// </summary>
+        /// <returns>List of queries</returns>
         [Authorize(Roles = "Admin")]
         [HttpGet]
+        [ProducesResponseType(typeof(IList<Query>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAllQueries()
         {
-            var queries = await _queryService.GetAllQueriesAsync();
-            return Ok(queries);
+            try
+            {
+                var queries = await _queryService.GetAllQueriesAsync();
+                return Ok(queries);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new ErrorModel(500, ex.Message));
+            }
         }
 
-
+        /// <summary>
+        /// Get a query by its ID (Authenticated users only)
+        /// </summary>
+        /// <param name="id">Query ID</param>
+        /// <returns>Query details</returns>
         [Authorize]
         [HttpGet("{id}")]
+        [ProducesResponseType(typeof(Query), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetQueryById(int id)
         {
             try
@@ -69,8 +97,13 @@ namespace CarBookingApplication.Controllers
                 {
                     throw new NotLoggedInException("User is not logged in.");
                 }
+
                 var query = await _queryService.GetQueryByIdAsync(id, int.Parse(customerId));
                 return Ok(query);
+            }
+            catch (NotLoggedInException ex)
+            {
+                return Unauthorized(new ErrorModel(401, ex.Message));
             }
             catch (NoSuchQueryFoundException ex)
             {
@@ -80,11 +113,19 @@ namespace CarBookingApplication.Controllers
             {
                 return StatusCode(500, new ErrorModel(500, ex.Message));
             }
-            
         }
 
+        /// <summary>
+        /// Respond to a query (Admin only)
+        /// </summary>
+        /// <param name="id">Query ID</param>
+        /// <param name="response">Response message</param>
+        /// <returns>Query response</returns>
         [Authorize(Roles = "Admin")]
         [HttpPut("{id}/respond")]
+        [ProducesResponseType(typeof(QueryResponseDTO), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> RespondToQuery(int id, [FromBody] string response)
         {
             try
@@ -102,8 +143,16 @@ namespace CarBookingApplication.Controllers
             }
         }
 
+        /// <summary>
+        /// Close a query (Admin only)
+        /// </summary>
+        /// <param name="id">Query ID</param>
+        /// <returns>Query closure result</returns>
         [Authorize(Roles = "Admin")]
         [HttpPut("{id}/close")]
+        [ProducesResponseType(typeof(QueryResponseDTO), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<QueryResponseDTO>> CloseQuery(int id)
         {
             try

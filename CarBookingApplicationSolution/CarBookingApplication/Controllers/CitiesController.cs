@@ -3,6 +3,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using CarBookingApplication.Models.DTOs.CityDTOs;
 using CarBookingApplication.Interfaces;
+using CarBookingApplication.Exceptions;
+using System;
+using CarBookingApplication.Models;
+using CarBookingApplication.Exceptions.City;
 
 namespace CarBookingApplication.Controllers
 {
@@ -18,46 +22,113 @@ namespace CarBookingApplication.Controllers
             _cityService = cityService;
         }
 
+        /// <summary>
+        /// Add a new city (Admin only)
+        /// </summary>
+        /// <param name="cityDto">City details</param>
+        /// <returns>City addition result</returns>
         [HttpPost]
-        public async Task<IActionResult> AddCity([FromBody] CityDTO cityDto)
+        [ProducesResponseType(typeof(CityResponseDTO), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(CityResponseDTO), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<CityResponseDTO>> AddCity([FromBody] CityDTO cityDto)
         {
-            var result = await _cityService.AddCityAsync(cityDto);
-            if (result.Success)
+            try
             {
-                return Ok(result);
+                var result = await _cityService.AddCityAsync(cityDto);
+                if (result.Success)
+                {
+                    return Ok(result);
+                }
+                return BadRequest(result);
             }
-            return BadRequest(result);
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new ErrorModel(500, ex.Message));
+            }
         }
 
+        /// <summary>
+        /// Edit an existing city (Admin only)
+        /// </summary>
+        /// <param name="id">City ID</param>
+        /// <param name="cityDto">Updated city details</param>
+        /// <returns>City update result</returns>
         [HttpPut("{id}")]
-        public async Task<ActionResult> EditCity(int id, [FromBody] CityDTO cityDto)
+        [ProducesResponseType(typeof(CityResponseDTO), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(CityResponseDTO), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<CityResponseDTO>> EditCity(int id, [FromBody] CityDTO cityDto)
         {
-            var result = await _cityService.EditCityAsync(id, cityDto);
-            if (result.Success)
+            try
             {
-                return Ok(result);
+                var result = await _cityService.EditCityAsync(id, cityDto);
+                if (result.Success)
+                {
+                    return Ok(result);
+                }
+                return BadRequest(result);
             }
-            return BadRequest(result);
+            catch (NoSuchCityFoundException ex)
+            {
+                return NotFound(new ErrorModel(404, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new ErrorModel(500, ex.Message));
+            }
         }
 
+        /// <summary>
+        /// Delete a city (Admin only)
+        /// </summary>
+        /// <param name="id">City ID</param>
+        /// <returns>City deletion result</returns>
         [HttpDelete("{id}")]
-        public async Task<ActionResult> DeleteCity(int id)
+        [ProducesResponseType(typeof(CityResponseDTO), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(CityResponseDTO), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<CityResponseDTO>> DeleteCity(int id)
         {
-            var result = await _cityService.DeleteCityAsync(id);
-            if (result.Success)
+            try
             {
-                return Ok(result);
+                var result = await _cityService.DeleteCityAsync(id);
+                if (result.Success)
+                {
+                    return Ok(result);
+                }
+                return BadRequest(result);
             }
-            return BadRequest(result);
+            catch (NoSuchCityFoundException ex)
+            {
+                return NotFound(new ErrorModel(404, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new ErrorModel(500, ex.Message));
+            }
         }
 
-
+        /// <summary>
+        /// Get all cities
+        /// </summary>
+        /// <returns>List of cities</returns>
         [HttpGet]
-        public async Task<ActionResult> GetAllCities()
+        [ProducesResponseType(typeof(IList<CityDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<IList<CityDTO>>> GetAllCities()
         {
-            var cities = await _cityService.GetAllCitiesAsync();
-            return Ok(cities);
+            try
+            {
+                var cities = await _cityService.GetAllCitiesAsync();
+                return Ok(cities);
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(StatusCodes.Status500InternalServerError, new ErrorModel(500, ex.Message));
+            }
         }
     }
-
 }

@@ -1,9 +1,9 @@
 ﻿using CarBookingApplication.Interfaces;
 using CarBookingApplication.Models;
 using CarBookingApplication.Models.DTOs.UserDTOs;
-using CarBookingApplication.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 
 namespace EmployeeRequestTrackerAPI.Controllers
 {
@@ -13,12 +13,18 @@ namespace EmployeeRequestTrackerAPI.Controllers
     {
         private readonly IUserService _userService;
         private readonly ILogger<UserController> _logger;
+
         public UserController(IUserService userService, ILogger<UserController> logger)
         {
             _userService = userService;
             _logger = logger;
         }
 
+        /// <summary>
+        /// Login for users
+        /// </summary>
+        /// <param name="userLoginDTO">User login details</param>
+        /// <returns>Login result</returns>
         [HttpPost("Login")]
         [ProducesResponseType(typeof(LoginReturnDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status401Unauthorized)]
@@ -34,8 +40,13 @@ namespace EmployeeRequestTrackerAPI.Controllers
                 _logger.LogCritical("User not authenticated");
                 return Unauthorized(new ErrorModel(401, ex.Message));
             }
-           
         }
+
+        /// <summary>
+        /// Register new users
+        /// </summary>
+        /// <param name="userDTO">User details</param>
+        /// <returns>Newly registered user</returns>
         [HttpPost("Register")]
         [ProducesResponseType(typeof(Customer), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
@@ -53,8 +64,15 @@ namespace EmployeeRequestTrackerAPI.Controllers
             }
         }
 
+        /// <summary>
+        /// Activate user (Admin only)
+        /// </summary>
+        /// <param name="userActivationDto">User activation details</param>
+        /// <returns>Activation result</returns>
         [Authorize(Roles = "Admin")]
         [HttpPut("activate")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
         public async Task<ActionResult> ActivateUser([FromBody] UserActivationDTO userActivationDto)
         {
             try
@@ -67,10 +85,6 @@ namespace EmployeeRequestTrackerAPI.Controllers
                 _logger.LogError(ex.Message);
                 return BadRequest(new ErrorModel(400, ex.Message));
             }
-            
         }
     }
 }
-
-
-
