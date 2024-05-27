@@ -50,6 +50,10 @@ Functional Requirements:
 	g. Manage Profile:
 	Customers can edit their profile details such as email, phone number, and address.
 
+
+3. Driver Module:
+	a. Cancel and View Bookings
+
  
 Logics related to discounts : 
 1. Seasonal Discount: 10% off in December month

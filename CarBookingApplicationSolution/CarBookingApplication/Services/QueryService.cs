@@ -83,6 +83,7 @@ public class QueryService : IQueryService
         }
 
         query.Response = response;
+
         query.Status = "Responded";
 
         await _queryRepository.Update(query);
