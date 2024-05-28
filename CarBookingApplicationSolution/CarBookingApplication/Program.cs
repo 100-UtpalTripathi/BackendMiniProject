@@ -98,6 +98,8 @@ namespace CarBookingApplication
             builder.Services.AddScoped<ICityService, CityService>();
             builder.Services.AddScoped<IQueryService, QueryService>();
             builder.Services.AddScoped<ICarService, CarService>();
+            builder.Services.AddScoped<IBookingService, BookingService>();
+            builder.Services.AddScoped<ICustomerService, CustomerService>();
 
             #endregion
 

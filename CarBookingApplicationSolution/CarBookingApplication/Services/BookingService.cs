@@ -45,7 +45,7 @@ namespace CarBookingApplication.Services
             {
                 throw new NoBookingsFoundException("Error occurred while retrieving bookings.");
             }
-            
+
         }
 
 
@@ -57,7 +57,7 @@ namespace CarBookingApplication.Services
 
                 var storedBooking = await _bookingRepository.GetByKey(bookingId);
 
-                if(customer.Role != "Admin" && storedBooking.CustomerId != customerId)
+                if (customer.Role != "Admin" && storedBooking.CustomerId != customerId)
                 {
                     throw new UnauthorizedAccessException("You are not authorized to view this booking.");
                 }
@@ -98,7 +98,7 @@ namespace CarBookingApplication.Services
                     };
                 }
 
-                if(booking.Status == "Cancelled")
+                if (booking.Status == "Cancelled")
                 {
                     return new BookingResponseDTO
                     {
@@ -107,7 +107,7 @@ namespace CarBookingApplication.Services
                     };
                 }
 
-                if(booking.StartDate < DateTime.Now)
+                if (booking.StartDate < DateTime.Now)
                 {
                     return new BookingResponseDTO
                     {
@@ -134,7 +134,7 @@ namespace CarBookingApplication.Services
                 }
                 else
                 {
-                    
+
                     decimal cancellationFee = CalculateCancellationFee(timeDifference);
 
                     // Update the booking with the cancellation fee and status
@@ -230,6 +230,22 @@ namespace CarBookingApplication.Services
 
             return discountAmount;
         }
-    }
 
+        private decimal CalculateCancellationFee(TimeSpan timeDifference)
+        {
+            // Calculate the remaining hours until the booking start date
+            double remainingHours = 48 - timeDifference.TotalHours;
+
+            // If the remaining hours are less than or equal to zero, no cancellation fee is applied
+            if (remainingHours <= 0)
+            {
+                return 0;
+            }
+            else
+            {
+                decimal cancellationFee = (decimal)remainingHours * 40; // Assuming $40 per hour
+                return cancellationFee;
+            }
+        }
+    }
 }
