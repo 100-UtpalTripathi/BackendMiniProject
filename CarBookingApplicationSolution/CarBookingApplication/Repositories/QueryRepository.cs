@@ -49,14 +49,21 @@ namespace CarBookingApplication.Repositories
 
         public async Task<Query> Update(Query item)
         {
-            var Query = await GetByKey(item.Id);
-            if (Query != null)
+            var query = await GetByKey(item.Id);
+            if (query != null)
             {
-                _context.Queries.Update(item);
+                // Update the properties of the retrieved query entity
+                query.Subject = item.Subject;
+                query.Message = item.Message;
+                query.Status = item.Status;
+                query.UpdatedDate = DateTime.Now; // Optionally update the UpdatedDate property
+
+                // Save changes to the database
                 await _context.SaveChangesAsync(true);
-                return Query;
+                return query;
             }
             throw new NoSuchQueryFoundException();
         }
+
     }
 }

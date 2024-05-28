@@ -15,9 +15,17 @@ namespace CarBookingApplication.Repositories
         }
         public async Task<Customer> Add(Customer item)
         {
-            _context.Customers.Add(item);
-            await _context.SaveChangesAsync();
-            return item;
+            try
+            {
+                _context.Customers.Add(item);
+                await _context.SaveChangesAsync();
+                return item;
+            }
+            catch (DbUpdateException)
+            {
+                throw new CustomerAlreadyExistsException();
+            }
+            
         }
 
         public async Task<Customer> DeleteByKey(int key)
@@ -47,16 +55,19 @@ namespace CarBookingApplication.Repositories
 
         public async Task<Customer> Update(Customer item)
         {
-            var Customer = await GetByKey(item.Id);
-            if (Customer != null)
+            var existingCustomer = await GetByKey(item.Id);
+            if (existingCustomer != null)
             {
+                // Detach the existing entity from the context
+                _context.Entry(existingCustomer).State = EntityState.Detached;
+
+                // Update the entity with the new values
                 _context.Customers.Update(item);
                 await _context.SaveChangesAsync(true);
-                return Customer;
+                return item;
             }
             throw new NoSuchCustomerFoundException();
         }
 
-       
     }
 }

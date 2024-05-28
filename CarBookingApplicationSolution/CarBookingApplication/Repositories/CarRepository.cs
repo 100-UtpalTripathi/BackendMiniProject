@@ -48,14 +48,23 @@ namespace CarBookingApplication.Repositories
 
         public async Task<Car> Update(Car item)
         {
-            var car = await GetByKey(item.Id);
-            if (car != null)
+            var existingCar = await GetByKey(item.Id);
+            if (existingCar != null)
             {
-                _context.Cars.Update(item);
+                // Detach the existing entity from the context
+                _context.Entry(existingCar).State = EntityState.Detached;
+
+                // Attach the provided entity to the context and mark it as modified
+                _context.Attach(item);
+                _context.Entry(item).State = EntityState.Modified;
+
+                // Save changes to the database
                 await _context.SaveChangesAsync();
-                return car;
+
+                return item;
             }
             throw new NoSuchCarFoundException();
         }
+
     }
 }

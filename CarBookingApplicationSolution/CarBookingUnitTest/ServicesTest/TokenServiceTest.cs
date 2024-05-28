@@ -1,10 +1,7 @@
 using CarBookingApplication.Interfaces;
 using CarBookingApplication.Models;
-using CarBookingApplication.Services;
 using Microsoft.Extensions.Configuration;
 using Moq;
-using NUnit.Framework;
-using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
