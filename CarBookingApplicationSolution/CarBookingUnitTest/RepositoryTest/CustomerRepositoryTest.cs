@@ -7,7 +7,7 @@ using NUnit.Framework;
 using System;
 using System.Threading.Tasks;
 
-namespace CarBookingUnitTest
+namespace CarBookingUnitTest.RepositoryTest
 {
     public class CustomerRepositoryTest
     {
@@ -19,16 +19,6 @@ namespace CarBookingUnitTest
             _options = new DbContextOptionsBuilder<CarBookingContext>()
                 .UseInMemoryDatabase(databaseName: "test_database")
                 .Options;
-
-            // Seed the database with test data
-            using (var context = new CarBookingContext(_options))
-            {
-                context.Customers.AddRange(
-                    new Customer { Id = 1, Name = "Somu", DateOfBirth = new DateTime(1990, 1, 1), Phone = "1234567890", Email = "somu@example.com", Role = "User" },
-                    new Customer { Id = 2, Name = "Aruna", DateOfBirth = new DateTime(1985, 5, 5), Phone = "9876543210", Email = "aruna@example.com", Role = "Admin" }
-                );
-                context.SaveChanges();
-            }
         }
 
         [Test]
@@ -92,13 +82,15 @@ namespace CarBookingUnitTest
             using (var context = new CarBookingContext(_options))
             {
                 var repository = new CustomerRepository(context);
+                var newCustomer = new Customer { Name = "Alba", DateOfBirth = DateTime.Parse("1990-01-01"), Phone = "123456789", Email = "alba@gmail.com", Role = "Admin" };
+                var addedCustomer = await repository.Add(newCustomer);
 
                 // Act
-                var customer = await repository.GetByKey(1);
+                var customer = await repository.GetByKey(addedCustomer.Id);
 
                 // Assert
                 Assert.IsNotNull(customer);
-                Assert.AreEqual(1, customer.Id);
+                Assert.AreEqual(addedCustomer.Id, customer.Id);
             }
         }
 
@@ -163,6 +155,9 @@ namespace CarBookingUnitTest
             {
                 var repository = new CustomerRepository(context);
                 var customer = new Customer { Id = 1, Name = "Albatross", DateOfBirth = new DateTime(1990, 1, 1), Phone = "1234567890", Email = "albatross@example.com", Role = "User" };
+                await repository.Add(customer);
+
+                customer.Name = "UpdatedName";
 
                 // Act
                 var updatedCustomer = await repository.Update(customer);

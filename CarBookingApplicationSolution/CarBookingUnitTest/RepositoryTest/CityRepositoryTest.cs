@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CarBookingUnitTest
+namespace CarBookingUnitTest.RepositoryTest
 {
     public class CityRepositoryTest
     {
@@ -22,15 +22,6 @@ namespace CarBookingUnitTest
                 .UseInMemoryDatabase(databaseName: "test_database")
                 .Options;
 
-            // Seed the database with test data
-            using (var context = new CarBookingContext(_options))
-            {
-                context.Cities.AddRange(
-                    new City { Id = 1, Name = "City1", State = "State1", Country = "Country1" },
-                    new City { Id = 2, Name = "City2", State = "State2", Country = "Country2" }
-                );
-                context.SaveChanges();
-            }
         }
 
         [Test]
@@ -95,12 +86,18 @@ namespace CarBookingUnitTest
             {
                 var repository = new CityRepository(context);
 
+                var city = new City { Id = 24, Name = "City1", State = "State1", Country = "Country1" };
+
+                await context.Cities.AddAsync(city);
+                await context.SaveChangesAsync();
+
+
                 // Act
-                var city = await repository.GetByKey(1);
+                var addedCity = await repository.GetByKey(24);
 
                 // Assert
                 Assert.IsNotNull(city);
-                Assert.AreEqual(1, city.Id);
+                Assert.AreEqual(24, city.Id);
             }
         }
 
@@ -113,7 +110,7 @@ namespace CarBookingUnitTest
                 var repository = new CityRepository(context);
 
                 // Act & Assert
-                var city = await repository.GetByKey(100); // Assuming ID 100 does not exist
+                var city = await repository.GetByKey(105); // Assuming ID 105 does not exist
                 Assert.IsNull(city);
             }
         }
@@ -126,12 +123,19 @@ namespace CarBookingUnitTest
             {
                 var repository = new CityRepository(context);
 
+                var city = new City { Id = 100, Name = "City100", State = "State100", Country = "Country100" };
+                var city1 = new City { Id = 101, Name = "City101", State = "State101", Country = "Country101" };
+
+                await context.Cities.AddAsync(city);
+                await context.Cities.AddAsync(city1);
+                await context.SaveChangesAsync();
+
                 // Act
                 var cities = await repository.Get();
 
                 // Assert
                 Assert.IsNotNull(cities);
-                Assert.AreEqual(2, cities.Count());
+                Assert.AreEqual(3, cities.Count());
             }
         }
 
@@ -142,8 +146,10 @@ namespace CarBookingUnitTest
             using (var context = new CarBookingContext(_options))
             {
                 var repository = new CityRepository(context);
-                var city = new City { Id = 1, Name = "UpdatedCity", State = "UpdatedState", Country = "UpdatedCountry" };
+                var city = new City { Name = "New12City", State = "UpdatedState", Country = "UpdatedCountry" };
+                var addedCity = await repository.Add(city);
 
+                addedCity.Name = "UpdatedCity";
                 // Act
                 var updatedCity = await repository.Update(city);
 
@@ -152,16 +158,16 @@ namespace CarBookingUnitTest
 
                 // Assert
                 Assert.IsNotNull(updatedCity);
-                Assert.AreEqual(city.Id, updatedCity.Id);
-                Assert.AreEqual(city.Name, updatedCity.Name);
-                Assert.AreEqual(city.State, updatedCity.State);
-                Assert.AreEqual(city.Country, updatedCity.Country);
+                Assert.AreEqual(addedCity.Id, updatedCity.Id);
+                Assert.AreEqual(addedCity.Name, updatedCity.Name);
+                Assert.AreEqual(addedCity.State, updatedCity.State);
+                Assert.AreEqual(addedCity.Country, updatedCity.Country);
 
                 // Additional assertion to ensure the city was updated in the database
                 Assert.IsNotNull(retrievedCity);
-                Assert.AreEqual(city.Name, retrievedCity.Name);
-                Assert.AreEqual(city.State, retrievedCity.State);
-                Assert.AreEqual(city.Country, retrievedCity.Country);
+                Assert.AreEqual(addedCity.Name, retrievedCity.Name);
+                Assert.AreEqual(addedCity.State, retrievedCity.State);
+                Assert.AreEqual(addedCity.Country, retrievedCity.Country);
             }
         }
 
@@ -173,10 +179,16 @@ namespace CarBookingUnitTest
             using (var context = new CarBookingContext(_options))
             {
                 var repository = new CityRepository(context);
-                var city = new City { Id = 100, Name = "UpdatedCity", State = "UpdatedState", Country = "UpdatedCountry" };
+
+                var city = new City { Name = "UpdatedCity", State = "UpdatedState", Country = "UpdatedCountry" };
+                var retrievedCity = await repository.Add(city);
+
+                await repository.DeleteByKey(retrievedCity.Id);
+
+
 
                 // Act & Assert
-                var ex = Assert.ThrowsAsync<NoSuchCityFoundException>(() => repository.Update(city));
+                var ex = Assert.ThrowsAsync<NoSuchCityFoundException>(() => repository.Update(retrievedCity));
                 Assert.AreEqual("No such city found", ex.Message);
             }
         }

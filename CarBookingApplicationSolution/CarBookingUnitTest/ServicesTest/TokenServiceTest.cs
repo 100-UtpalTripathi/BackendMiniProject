@@ -6,7 +6,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 
-namespace CarBookingUnitTest
+namespace CarBookingUnitTest.ServicesTest
 {
     public class TokenServiceTest
     {

@@ -1,4 +1,5 @@
 ﻿using CarBookingApplication.Exceptions;
+using CarBookingApplication.Exceptions.Customer;
 using CarBookingApplication.Exceptions.User;
 using CarBookingApplication.Interfaces;
 using CarBookingApplication.Models;
@@ -129,55 +130,64 @@ namespace CarBookingApplication.Services
         {
             try
             {
-                ReturnUserActivationDTO returnUserActivationDTO = null;
-
                 var user = await _userRepo.GetByKey(userActivationDTO.UserId);
-                var customer = await _customerRepo.GetByKey(userActivationDTO.UserId);
-
-                if(user.Status != "Active")
+                if (user == null)
                 {
-                    throw new UnauthorizedAccessException("Can't activate Users. Not Authorized!");
+                    throw new NoSuchUserFoundException("User not found.");
                 }
 
-                if (user != null && customer.Role == "Admin")
+                var customer = await _customerRepo.GetByKey(userActivationDTO.UserId);
+                if (customer == null)
                 {
-                    if (userActivationDTO.IsActive)
-                    {
-                        user.Status = "Active";
+                    throw new NoSuchCustomerFoundException("Customer not found.");
+                }
 
-                        //saving chnages in db
-                        var UpdatedUser = await _userRepo.Update(user);
+                if (customer.Role != "Admin")
+                {
+                    throw new UnauthorizedAccessException("Only admins can activate users.");
+                }
 
-                        if (UpdatedUser != null)
-                        {
-                            returnUserActivationDTO = new ReturnUserActivationDTO
-                            {
-                                UserId = user.CustomerId,
-                                Status = user.Status
-                            };
-                        }
-                        else
-                        {
-                            throw new UserUpdateStatusFailedException("Failed to update user status.");
-                        }
-                    }
-                    else
+                if (userActivationDTO.IsActive)
+                {
+                    user.Status = "Active";
+
+                    var updatedUser = await _userRepo.Update(user);
+
+                    if (updatedUser == null)
                     {
-                        throw new Exception("User activation flag is false.");
+                        throw new UserUpdateStatusFailedException("Failed to update user status.");
                     }
+
+                    return new ReturnUserActivationDTO
+                    {
+                        UserId = user.CustomerId,
+                        Status = user.Status
+                    };
                 }
                 else
                 {
-                    throw new NoSuchUserFoundException("Can't change the status of given User!");
+                    throw new ArgumentException("User activation flag is false.");
                 }
-
-                return returnUserActivationDTO;
             }
-            catch (Exception)
+            catch (NoSuchUserFoundException ex)
             {
+                throw;
+            }
+            catch (NoSuchCustomerFoundException ex)
+            {
+                throw;
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            {
+                // Log generic exception
                 throw new UserUpdateStatusFailedException("Unable to activate user at this moment.");
             }
         }
+
 
         public static Customer MapToCustomer(CustomerUserDTO customerDTO)
         {

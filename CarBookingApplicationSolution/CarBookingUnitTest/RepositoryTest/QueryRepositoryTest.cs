@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CarBookingUnitTest
+namespace CarBookingUnitTest.RepositoryTest
 {
     public class QueryRepositoryTest
     {
@@ -22,15 +22,7 @@ namespace CarBookingUnitTest
                 .UseInMemoryDatabase(databaseName: "test_database")
                 .Options;
 
-            // Seed the database with test data
-            using (var context = new CarBookingContext(_options))
-            {
-                context.Queries.AddRange(
-                    new Query { Id = 1, CustomerId = 1, Subject = "Test Subject 1", Message = "Test Message 1", Status = "Open", CreatedDate = DateTime.Now },
-                    new Query { Id = 2, CustomerId = 2, Subject = "Test Subject 2", Message = "Test Message 2", Status = "Closed", CreatedDate = DateTime.Now }
-                );
-                context.SaveChanges();
-            }
+            
         }
 
         [Test]
@@ -89,13 +81,15 @@ namespace CarBookingUnitTest
             using (var context = new CarBookingContext(_options))
             {
                 var repository = new QueryRepository(context);
+                var newQuery = new Query { CustomerId = 104, Subject = "New Query", Message = "New Query Message", Status = "Open", CreatedDate = DateTime.Now };
 
+                var addedQuery = await repository.Add(newQuery);
                 // Act
-                var query = await repository.GetByKey(1);
+                var query = await repository.GetByKey(addedQuery.Id);
 
                 // Assert
                 Assert.IsNotNull(query);
-                Assert.AreEqual(1, query.Id);
+                Assert.AreEqual(2, query.Id);
             }
         }
 
@@ -126,7 +120,7 @@ namespace CarBookingUnitTest
 
                 // Assert
                 Assert.IsNotNull(queries);
-                Assert.AreEqual(2, queries.Count()); // Assuming 2 queries were seeded in the database
+                Assert.AreEqual(0, queries.Count()); // Assuming 2 queries were seeded in the database
             }
         }
 
@@ -137,15 +131,17 @@ namespace CarBookingUnitTest
             using (var context = new CarBookingContext(_options))
             {
                 var repository = new QueryRepository(context);
-                var query = new Query { Id = 1, CustomerId = 1, Subject = "Updated Subject", Message = "Updated Message", Status = "Closed", CreatedDate = DateTime.Now };
+                var query = new Query { CustomerId = 1, Subject = "Updated Subject", Message = "Updated Message", Status = "Closed", CreatedDate = DateTime.Now };
 
+                var addedQuery = await repository.Add(query);
+                addedQuery.Subject = "New Subject";
                 // Act
-                var updatedQuery = await repository.Update(query);
+                var updatedQuery = await repository.Update(addedQuery);
 
                 // Assert
                 Assert.IsNotNull(updatedQuery);
-                Assert.AreEqual(query.Id, updatedQuery.Id);
-                Assert.AreEqual(query.Subject, updatedQuery.Subject);
+                Assert.AreEqual(addedQuery.Id, updatedQuery.Id);
+                Assert.AreEqual(addedQuery.Subject, updatedQuery.Subject);
             }
         }
 

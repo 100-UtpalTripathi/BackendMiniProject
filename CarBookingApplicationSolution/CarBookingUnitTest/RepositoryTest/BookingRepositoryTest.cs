@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CarBookingUnitTest
+namespace CarBookingUnitTest.RepositoryTest
 {
     public class BookingRepositoryTest
     {
@@ -21,40 +21,6 @@ namespace CarBookingUnitTest
             _options = new DbContextOptionsBuilder<CarBookingContext>()
                 .UseInMemoryDatabase(databaseName: "test_database")
                 .Options;
-
-            // Seed the database with test data
-            using (var context = new CarBookingContext(_options))
-            {
-                context.Bookings.AddRange(
-                    new Booking
-                    {
-                        Id = 1,
-                        CarId = 1,
-                        CustomerId = 1,
-                        BookingDate = DateTime.Now,
-                        StartDate = DateTime.Today.AddDays(1),
-                        EndDate = DateTime.Today.AddDays(3),
-                        TotalAmount = 100,
-                        DiscountAmount = 10,
-                        FinalAmount = 90,
-                        Status = "Confirmed"
-                    },
-                    new Booking
-                    {
-                        Id = 2,
-                        CarId = 2,
-                        CustomerId = 2,
-                        BookingDate = DateTime.Now,
-                        StartDate = DateTime.Today.AddDays(1),
-                        EndDate = DateTime.Today.AddDays(5),
-                        TotalAmount = 200,
-                        DiscountAmount = 0,
-                        FinalAmount = 200,
-                        Status = "Cancelled"
-                    }
-                );
-                context.SaveChanges();
-            }
         }
 
         [Test]
@@ -96,12 +62,27 @@ namespace CarBookingUnitTest
             {
                 var repository = new BookingRepository(context);
 
+                var booking = new Booking
+                {
+                    CarId = 5,
+                    CustomerId = 10,
+                    BookingDate = DateTime.Now,
+                    StartDate = DateTime.Today.AddDays(1),
+                    EndDate = DateTime.Today.AddDays(3),
+                    TotalAmount = 180,
+                    DiscountAmount = 0,
+                    FinalAmount = 180,
+                    Status = "Confirmed"
+                };
+
                 // Act
-                var deletedBooking = await repository.DeleteByKey(1);
+                var addedBooking = await repository.Add(booking);
+
+                var deletedBooking = await repository.DeleteByKey(addedBooking.Id);
 
                 // Assert
                 Assert.IsNotNull(deletedBooking);
-                Assert.AreEqual(1, deletedBooking.Id);
+                Assert.AreEqual(addedBooking.Id, deletedBooking.Id);
             }
         }
 
@@ -157,13 +138,41 @@ namespace CarBookingUnitTest
             using (var context = new CarBookingContext(_options))
             {
                 var repository = new BookingRepository(context);
+                var booking1 = new Booking
+                {
+                    CarId = 5,
+                    CustomerId = 10,
+                    BookingDate = DateTime.Now,
+                    StartDate = DateTime.Today.AddDays(1),
+                    EndDate = DateTime.Today.AddDays(3),
+                    TotalAmount = 180,
+                    DiscountAmount = 0,
+                    FinalAmount = 180,
+                    Status = "Confirmed"
+                };
+                var booking2 = new Booking
+                {
+                    CarId = 10,
+                    CustomerId = 5,
+                    BookingDate = DateTime.Now,
+                    StartDate = DateTime.Today.AddDays(1),
+                    EndDate = DateTime.Today.AddDays(3),
+                    TotalAmount = 1200,
+                    DiscountAmount = 0,
+                    FinalAmount = 1200,
+                    Status = "Confirmed"
+                };
+
+               
+                await repository.Add(booking1);
+                await repository.Add(booking2);
 
                 // Act
                 var bookings = await repository.Get();
 
                 // Assert
                 Assert.IsNotNull(bookings);
-                Assert.AreEqual(2, bookings.Count()); // Assuming 2 bookings were seeded in the database
+                Assert.AreEqual(3, bookings.Count()); // Assuming 2 bookings were seeded in the database
             }
         }
 

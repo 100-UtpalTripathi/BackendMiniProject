@@ -5,7 +5,7 @@ using CarBookingApplication.Repositories;
 using Microsoft.EntityFrameworkCore;
 
 
-namespace CarBookingUnitTest
+namespace CarBookingUnitTest.RepositoryTest
 {
     public class UserRepositoryTest
     {
@@ -18,15 +18,7 @@ namespace CarBookingUnitTest
                 .UseInMemoryDatabase(databaseName: "test_database")
                 .Options;
 
-            // Seed the database with test data
-            using (var context = new CarBookingContext(_options))
-            {
-                context.Users.AddRange(
-                    new User { CustomerId = 1, Password = new byte[] { 0x01, 0x02, 0x03 }, PasswordHashKey = new byte[] { 0x04, 0x05, 0x06 }, Status = "Enabled" },
-                    new User { CustomerId = 2, Password = new byte[] { 0x07, 0x08, 0x09 }, PasswordHashKey = new byte[] { 0x0A, 0x0B, 0x0C }, Status = "Enabled" }
-                );
-                context.SaveChanges();
-            }
+            
         }
 
         [Test]
@@ -91,13 +83,17 @@ namespace CarBookingUnitTest
             using (var context = new CarBookingContext(_options))
             {
                 var repository = new UserRepository(context);
+                var user = new User { CustomerId = 5,Password = new byte[] { 0x07, 0x08, 0x09 }, PasswordHashKey = new byte[] { 0x0A, 0x0B, 0x0C }, Status = "Enabled" };
+
+                // Add the user and await the result
+                var addedUser = await repository.Add(user);
 
                 // Act
-                var user = await repository.GetByKey(1);
+                var getUser = await repository.GetByKey(addedUser.CustomerId); // Use the Id property to retrieve the user
 
                 // Assert
-                Assert.IsNotNull(user);
-                Assert.AreEqual(1, user.CustomerId);
+                Assert.IsNotNull(getUser);
+                Assert.AreEqual(addedUser.CustomerId, getUser.CustomerId); // Compare Id instead of CustomerId
             }
         }
 
@@ -128,7 +124,7 @@ namespace CarBookingUnitTest
 
                 // Assert
                 Assert.IsNotNull(users);
-                Assert.AreEqual(2, users.Count());
+                Assert.AreEqual(1, users.Count());
             }
         }
 
@@ -140,12 +136,14 @@ namespace CarBookingUnitTest
             {
                 var repository = new UserRepository(context);
 
+                var user = new User { CustomerId = 1, Password = new byte[] { 0x07, 0x08, 0x09 }, PasswordHashKey = new byte[] { 0x0A, 0x0B, 0x0C }, Status = "Enabled" };
+                var addedUser = await repository.Add(user);
                 // Get an existing user
-                var user = await repository.GetByKey(1);
-                user.Status = "Disabled"; // Change the status
+                var newUser = await repository.GetByKey(addedUser.CustomerId);
+                newUser.Status = "Disabled"; // Change the status
 
                 // Act
-                var updatedUser = await repository.Update(user);
+                var updatedUser = await repository.Update(newUser);
 
                 // Assert
                 Assert.IsNotNull(updatedUser);

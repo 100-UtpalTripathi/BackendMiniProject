@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace CarBookingUnitTest
+namespace CarBookingUnitTest.RepositoryTest
 {
     public class CarRepositoryTest
     {
@@ -21,16 +21,6 @@ namespace CarBookingUnitTest
             _options = new DbContextOptionsBuilder<CarBookingContext>()
                 .UseInMemoryDatabase(databaseName: "test_database")
                 .Options;
-
-            // Seed the database with test data
-            using (var context = new CarBookingContext(_options))
-            {
-                context.Cars.AddRange(
-                    new Car { Id = 1, Make = "Toyota", Model = "Corolla", Year = 2020, CityId = 1, Status = "Available", Transmission = "Automatic", NumberOfSeats = 5, Category = "Medium" },
-                    new Car { Id = 2, Make = "Honda", Model = "Civic", Year = 2019, CityId = 2, Status = "Available", Transmission = "Manual", NumberOfSeats = 5, Category = "Medium" }
-                );
-                context.SaveChanges();
-            }
         }
 
         [Test]
@@ -60,13 +50,15 @@ namespace CarBookingUnitTest
             using (var context = new CarBookingContext(_options))
             {
                 var repository = new CarRepository(context);
+                var car = new Car { Make = "Ford", Model = "Fiesta", Year = 2021, CityId = 5, Status = "Available", Transmission = "Manual", NumberOfSeats = 5, Category = "Small" };
+                var addedCar = await repository.Add(car);
 
                 // Act
-                var deletedCar = await repository.DeleteByKey(1);
+                var deletedCar = await repository.DeleteByKey(addedCar.Id);
 
                 // Assert
                 Assert.IsNotNull(deletedCar);
-                Assert.AreEqual(1, deletedCar.Id);
+                Assert.AreEqual(addedCar.Id, deletedCar.Id);
             }
         }
 
@@ -122,13 +114,19 @@ namespace CarBookingUnitTest
             using (var context = new CarBookingContext(_options))
             {
                 var repository = new CarRepository(context);
+                var car = new Car { Make = "Ford", Model = "Fiesta", Year = 2021, CityId = 5, Status = "Available", Transmission = "Manual", NumberOfSeats = 5, Category = "Small" };
+                await repository.Add(car);
+
+                var car1 = new Car { Make = "Mjustang", Model = "Fireee", Year = 2008, CityId = 5, Status = "Available", Transmission = "Manual", NumberOfSeats = 5, Category = "Small" };
+                await repository.Add(car1);
+
 
                 // Act
                 var cars = await repository.Get();
 
                 // Assert
                 Assert.IsNotNull(cars);
-                Assert.AreEqual(2, cars.Count()); // Assuming 2 cars were seeded in the database
+                Assert.AreEqual(3, cars.Count()); // Assuming 2 cars were seeded in the database
             }
         }
 

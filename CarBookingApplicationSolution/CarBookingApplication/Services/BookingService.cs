@@ -64,10 +64,8 @@ namespace CarBookingApplication.Services
 
                 return storedBooking;
             }
-            catch (Exception)
-            {
-                throw new NoBookingsFoundException("Error occurred while retrieving bookings.");
-            }
+            catch (UnauthorizedAccessException)
+            { throw; }
         }
 
         public async Task<BookingResponseDTO> CancelBookingAsync(int bookingId, int customerId)
@@ -162,6 +160,10 @@ namespace CarBookingApplication.Services
 
         public async Task<Booking> BookCarAsync(int customerId, BookingDTO bookingRequest)
         {
+            if (bookingRequest.BookingDate < DateTime.Now)
+            {
+                throw new InvalidBookingDate("Booking date cannot be in the past.");
+            }
             var car = await _carRepository.GetByKey(bookingRequest.CarId);
             if (car == null)
             {
