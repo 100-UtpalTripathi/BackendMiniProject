@@ -7,6 +7,8 @@ using CarBookingApplication.Exceptions;
 using System;
 using CarBookingApplication.Models;
 using CarBookingApplication.Exceptions.Car;
+using System.Collections.Generic;
+
 
 namespace CarBookingApplication.Controllers
 {
@@ -123,13 +125,17 @@ namespace CarBookingApplication.Controllers
         /// </summary>
         /// <returns>List of cars</returns>
         [HttpGet]
-        [ProducesResponseType(typeof(IList<CarDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<CarDTO>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<IList<CarDTO>>> GetAllCars()
+        public async Task<ActionResult<IEnumerable<CarDTO>>> GetAllCars()
         {
             try
             {
                 var cars = await _carService.GetAllCarsAsync();
+                if (!cars.Any())
+                {
+                    return Ok("No cars available at this time.");
+                }
                 return Ok(cars);
             }
             catch (Exception ex)
@@ -137,5 +143,7 @@ namespace CarBookingApplication.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, new ErrorModel(500, ex.Message));
             }
         }
+
+
     }
 }

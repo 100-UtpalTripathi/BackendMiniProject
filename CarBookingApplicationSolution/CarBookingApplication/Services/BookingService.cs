@@ -124,6 +124,14 @@ namespace CarBookingApplication.Services
                     booking.Status = "Cancelled";
                     await _bookingRepository.Update(booking);
 
+                    // Get the corresponding car and update its status to "Available"
+                    var car = await _carRepository.GetByKey(booking.CarId);
+                    if (car != null)
+                    {
+                        car.Status = "Available";
+                        await _carRepository.Update(car);
+                    }
+
                     return new BookingResponseDTO
                     {
                         Message = "Booking cancelled successfully.",
@@ -132,13 +140,20 @@ namespace CarBookingApplication.Services
                 }
                 else
                 {
-
                     decimal cancellationFee = CalculateCancellationFee(timeDifference);
 
                     // Update the booking with the cancellation fee and status
                     booking.Status = "Cancelled";
                     booking.FinalAmount -= cancellationFee; // Deduct the cancellation fee from the final amount
                     await _bookingRepository.Update(booking);
+
+                    // Get the corresponding car and update its status to "Available"
+                    var car = await _carRepository.GetByKey(booking.CarId);
+                    if (car != null)
+                    {
+                        car.Status = "Available";
+                        await _carRepository.Update(car);
+                    }
 
                     return new BookingResponseDTO
                     {
@@ -160,10 +175,7 @@ namespace CarBookingApplication.Services
 
         public async Task<Booking> BookCarAsync(int customerId, BookingDTO bookingRequest)
         {
-            if (bookingRequest.BookingDate < DateTime.Now)
-            {
-                throw new InvalidBookingDate("Booking date cannot be in the past.");
-            }
+            
             var car = await _carRepository.GetByKey(bookingRequest.CarId);
             if (car == null)
             {

@@ -15,7 +15,6 @@ using NUnit.Framework;
 
 namespace CarBookingUnitTest.ServicesTest
 {
-    [TestFixture]
     public class UserServiceTest
     {
         private Mock<IRepository<int, User>> _mockUserRepository;
@@ -235,5 +234,37 @@ namespace CarBookingUnitTest.ServicesTest
             // Act & Assert
             Assert.ThrowsAsync<UnauthorizedAccessException>(() => _userService.UserActivation(userActivationDTO));
         }
+
+        [Test]
+        public void ComparePassword_CorrectPassword_ReturnsTrue()
+        {
+            // Arrange
+            byte[] password = new HMACSHA512().ComputeHash(Encoding.UTF8.GetBytes("password"));
+            var userService = new UserService(null, null, null);
+
+            // Act
+            var result = userService.ComparePassword(password, password);
+
+            // Assert
+            Assert.IsTrue(result);
+        }
+
+        [Test]
+        public void ComparePassword_IncorrectPassword_ReturnsFalse()
+        {
+            // Arrange
+            byte[] password1 = new HMACSHA512().ComputeHash(Encoding.UTF8.GetBytes("password1"));
+            byte[] password2 = new HMACSHA512().ComputeHash(Encoding.UTF8.GetBytes("password2"));
+            var userService = new UserService(null, null, null);
+
+            // Act
+            var result = userService.ComparePassword(password1, password2);
+
+            // Assert
+            Assert.IsFalse(result);
+        }
+
+
+       
     }
 }

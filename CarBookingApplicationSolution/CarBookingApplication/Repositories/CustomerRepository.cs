@@ -15,17 +15,9 @@ namespace CarBookingApplication.Repositories
         }
         public async Task<Customer> Add(Customer item)
         {
-            try
-            {
-                _context.Customers.Add(item);
-                await _context.SaveChangesAsync();
-                return item;
-            }
-            catch (DbUpdateException)
-            {
-                throw new CustomerAlreadyExistsException();
-            }
-            
+            _context.Customers.Add(item);
+            await _context.SaveChangesAsync();
+            return item;
         }
 
         public async Task<Customer> DeleteByKey(int key)

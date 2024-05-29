@@ -46,7 +46,7 @@ namespace CarBookingApplication.Services
             throw new UnauthorizedUserException("Invalid username or password");
         }
 
-        private bool ComparePassword(byte[] encrypterPass, byte[] password)
+        public bool ComparePassword(byte[] encrypterPass, byte[] password)
         {
             for (int i = 0; i < encrypterPass.Length; i++)
             {

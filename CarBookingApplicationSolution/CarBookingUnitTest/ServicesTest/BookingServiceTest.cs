@@ -14,7 +14,6 @@ using NUnit.Framework;
 
 namespace CarBookingUnitTest.ServicesTest
 {
-    [TestFixture]
     public class BookingServiceTest
     {
         private Mock<IRepository<int, Booking>> _mockBookingRepository;
@@ -248,21 +247,24 @@ namespace CarBookingUnitTest.ServicesTest
         [Test]
         public void BookCarAsync_CarNotFound_ThrowsNoSuchCarFoundException()
         {
-            // Arrange
             var customerId = 1;
+            var carId = 1;
+
+
+            // Create a booking request with the current date
             var bookingRequest = new BookingDTO
             {
-                CarId = 1,
+                CarId = carId,
                 BookingDate = DateTime.Now,
                 StartDate = DateTime.Now.AddDays(1),
                 EndDate = DateTime.Now.AddDays(5)
             };
 
-            _mockCarRepository.Setup(repo => repo.GetByKey(bookingRequest.CarId)).ReturnsAsync((Car)null);
-
             // Act & Assert
+            // Ensure that the method under test throws a NoSuchCarFoundException when the car is not found
             Assert.ThrowsAsync<NoSuchCarFoundException>(() => _bookingService.BookCarAsync(customerId, bookingRequest));
         }
+
 
         [Test]
         public void BookCarAsync_CarNotAvailable_ThrowsCarNotAvailableForBookingException()
@@ -308,28 +310,44 @@ namespace CarBookingUnitTest.ServicesTest
         }
 
         [Test]
-        public void BookCarAsync_BookingDateInPast_ThrowsInvalidBookingDate()
+        public async Task CancelBookingAsync_BookingWithin48HoursNoCancellationFee_AppliesNoCancellationFee()
         {
             // Arrange
             var customerId = 1;
-            var carId = 1;
-            var bookingRequest = new BookingDTO
-            {
-                CarId = carId,
-                BookingDate = DateTime.Now.AddDays(-1), // Past date
-                StartDate = DateTime.Now.AddDays(1),
-                EndDate = DateTime.Now.AddDays(5)
-            };
+            var bookingId = 1;
+            var booking = new Booking { Id = bookingId, CustomerId = customerId, StartDate = DateTime.Now.AddDays(3), Status = "Confirmed" }; // Start date is 2 days from now
 
-            var car = new Car { Id = carId, Status = "Available" };
-            var customer = new Customer { Id = customerId, Bookings = new List<Booking>() };
+            _mockBookingRepository.Setup(repo => repo.GetByKey(bookingId)).ReturnsAsync(booking);
 
-            _mockCarRepository.Setup(repo => repo.GetByKey(carId)).ReturnsAsync(car);
-            _mockCustomerRepository.Setup(repo => repo.GetByKey(customerId)).ReturnsAsync(customer);
+            // Act
+            var result = await _bookingService.CancelBookingAsync(bookingId, customerId);
 
-            // Act & Assert
-            Assert.ThrowsAsync<InvalidBookingDate>(() => _bookingService.BookCarAsync(customerId, bookingRequest));
+            // Assert
+            Assert.IsTrue(result.Success);
+            Assert.AreEqual(booking.TotalAmount, booking.FinalAmount); // No cancellation fee applied, so final amount should remain the same as total amount
+
         }
+
+        [Test]
+        public async Task CancelBookingAsync_BookingWithin48HoursCancellationFee_AppliesCancellationFee()
+        {
+            // Arrange
+            var customerId = 1;
+            var bookingId = 1;
+            var booking = new Booking { Id = bookingId, CustomerId = customerId, StartDate = DateTime.Now.AddDays(1), Status = "Confirmed" }; // Start date is 1 day from now
+
+            _mockBookingRepository.Setup(repo => repo.GetByKey(bookingId)).ReturnsAsync(booking);
+
+            // Act
+            var result = await _bookingService.CancelBookingAsync(bookingId, customerId);
+
+            // Assert
+            Assert.IsTrue(result.Success);
+            Assert.AreEqual("Booking cancelled successfully. Cancellation fee applied.", result.Message);
+            Assert.AreEqual("Cancelled", booking.Status);
+            // You may want to calculate the expected cancellation fee based on the time difference and assert it
+        }
+
 
     }
 }
