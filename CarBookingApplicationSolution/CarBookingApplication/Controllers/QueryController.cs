@@ -17,10 +17,11 @@ namespace CarBookingApplication.Controllers
     public class QueriesController : ControllerBase
     {
         private readonly IQueryService _queryService;
-
-        public QueriesController(IQueryService queryService)
+        private readonly ILogger<QueriesController> _logger;
+        public QueriesController(IQueryService queryService, ILogger<QueriesController> logger)
         {
             _queryService = queryService;
+            _logger = logger;
         }
 
         /// <summary>
@@ -49,14 +50,17 @@ namespace CarBookingApplication.Controllers
             
             catch (NotLoggedInException ex)
             {
+                _logger.LogError(ex.Message);
                 return Unauthorized(new ErrorModel(401, ex.Message));
             }
             catch (UnauthorizedAccessException ex)
             {
+                _logger.LogError(ex.Message);
                 return Unauthorized(new ErrorModel(401, ex.Message));
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex.Message);
                 return StatusCode(500, new ErrorModel(500, ex.Message));
             }
         }
@@ -78,6 +82,7 @@ namespace CarBookingApplication.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex.Message);
                 return StatusCode(500, new ErrorModel(500, ex.Message));
             }
         }
@@ -108,18 +113,24 @@ namespace CarBookingApplication.Controllers
             }
             catch (NotLoggedInException ex)
             {
+                _logger.LogError(ex.Message);
                 return Unauthorized(new ErrorModel(401, ex.Message));
             }
             catch (NoSuchQueryFoundException ex)
             {
+                _logger.LogError(ex.Message);
                 return NotFound(new ErrorModel(404, ex.Message));
             }
             catch(UnauthorizedAccessException ex)
             {
+                _logger.LogError(ex.Message);
+
                 return Unauthorized(new ErrorModel(401, ex.Message));
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex.Message);
+
                 return StatusCode(500, new ErrorModel(500, ex.Message));
             }
             
@@ -145,10 +156,14 @@ namespace CarBookingApplication.Controllers
             }
             catch (NoSuchQueryFoundException ex)
             {
+                _logger.LogError(ex.Message);
+
                 return NotFound(new ErrorModel(404, ex.Message));
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex.Message);
+
                 return StatusCode(500, new ErrorModel(500, ex.Message));
             }
         }
@@ -172,10 +187,14 @@ namespace CarBookingApplication.Controllers
             }
             catch (NoSuchQueryFoundException ex)
             {
+                _logger.LogError(ex.Message);
+
                 return NotFound(new ErrorModel(404, ex.Message));
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex.Message);
+
                 return StatusCode(500, new ErrorModel(500, ex.Message));
             }
         }

@@ -14,12 +14,14 @@ namespace CarBookingApplication.Services
         private readonly IRepository<int, Booking> _bookingRepository;
         private readonly IRepository<int, Customer> _customerRepository;
         private readonly IRepository<int, Car> _carRepository;
+        private readonly ILogger<BookingService> _logger;
 
-        public BookingService(IRepository<int, Booking> bookingRepository, IRepository<int, Customer> customerRepository, IRepository<int, Car> CarRepository)
+        public BookingService(IRepository<int, Booking> bookingRepository, IRepository<int, Customer> customerRepository, IRepository<int, Car> CarRepository, ILogger<BookingService> logger)
         {
             _bookingRepository = bookingRepository;
             _customerRepository = customerRepository;
             _carRepository = CarRepository;
+            _logger = logger;
         }
 
         public async Task<IEnumerable<Booking>> GetAllBookingsAsync(int customerId)
@@ -57,6 +59,11 @@ namespace CarBookingApplication.Services
                 var customer = await _customerRepository.GetByKey(customerId);
 
                 var storedBooking = await _bookingRepository.GetByKey(bookingId);
+               
+                if(storedBooking == null)
+                {
+                    throw new NoSuchBookingFoundException();
+                }
 
                 if (customer.Role != "Admin" && storedBooking.CustomerId != customerId)
                 {
@@ -65,6 +72,8 @@ namespace CarBookingApplication.Services
 
                 return storedBooking;
             }
+            catch(NoSuchBookingFoundException)
+            { throw; }
             catch (UnauthorizedAccessException)
             { throw; }
         }
@@ -165,7 +174,8 @@ namespace CarBookingApplication.Services
             }
             catch (Exception ex)
             {
-                // Log and return a generic error response
+                _logger.LogError(ex.Message);
+
                 return new BookingResponseDTO
                 {
                     Message = "An unexpected error occurred while cancelling the booking.",
@@ -240,11 +250,12 @@ namespace CarBookingApplication.Services
 
             // Applying loyalty discount based on more than 5 bookings in same year
             var customerBookings = customer.Bookings.Where(b => b.BookingDate.Year == startDate.Year).Count();
+            
             if (customerBookings > 5)
             {
                 discountAmount += totalAmount * 0.05m; // 5% off for more than 5 bookings
             }
-
+            
             return discountAmount;
         }
 
@@ -276,6 +287,11 @@ namespace CarBookingApplication.Services
                 if (booking == null)
                 {
                     throw new NoSuchBookingFoundException($"Booking with ID {bookingId} not found.");
+                }
+
+                if(booking.Status == "Cancelled")
+                {
+                    throw new NoSuchBookingFoundException("Cannot extend a cancelled booking.");
                 }
 
                 if (booking.CustomerId != customerId)
@@ -317,7 +333,9 @@ namespace CarBookingApplication.Services
                 throw;
             }
             catch (Exception ex)
-            { 
+            {
+                _logger.LogError(ex.Message);
+
                 return new BookingResponseDTO
                 {
                     Success = false,

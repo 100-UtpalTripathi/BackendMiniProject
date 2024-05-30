@@ -20,17 +20,18 @@ namespace CarBookingApplication.Controllers
     public class CustomersController : ControllerBase
     {
         private readonly ICustomerService _customerService;
-
-        public CustomersController(ICustomerService customerService)
+        private readonly ILogger<CustomersController> _logger;
+        public CustomersController(ICustomerService customerService, ILogger<CustomersController> logger)
         {
             _customerService = customerService;
+            _logger = logger;
         }
 
         /// <summary>
         /// Get customer profile
         /// </summary>
         /// <returns>Customer profile</returns>
-        [HttpGet("profile")]
+        [HttpGet("profile/view")]
         [ProducesResponseType(typeof(CustomerUserDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status401Unauthorized)]
@@ -49,14 +50,17 @@ namespace CarBookingApplication.Controllers
             }
             catch (NotLoggedInException ex)
             {
+                _logger.LogError(ex.Message);
                 return Unauthorized(new ErrorModel(401, ex.Message));
             }
             catch (NoSuchCustomerFoundException ex)
             {
+                _logger.LogError(ex.Message);
                 return NotFound(new ErrorModel(404, ex.Message));
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex.Message);
                 return StatusCode(500, new ErrorModel(500, ex.Message));
             }
         }
@@ -66,7 +70,7 @@ namespace CarBookingApplication.Controllers
         /// </summary>
         /// <param name="customerDTO">Customer data transfer object</param>
         /// <returns>Updated customer profile</returns>
-        [HttpPut("profile")]
+        [HttpPut("profile/edit")]
         [ProducesResponseType(typeof(CustomerUserDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status401Unauthorized)]
@@ -85,14 +89,17 @@ namespace CarBookingApplication.Controllers
             }
             catch (NotLoggedInException ex)
             {
+                _logger.LogError(ex.Message);
                 return Unauthorized(new ErrorModel(401, ex.Message));
             }
             catch (NoSuchCustomerFoundException ex)
             {
+                _logger.LogError(ex.Message);
                 return NotFound(new ErrorModel(404, ex.Message));
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex.Message);
                 return StatusCode(500, new ErrorModel(500, ex.Message));
             }
         }
@@ -116,18 +123,26 @@ namespace CarBookingApplication.Controllers
                     throw new NotLoggedInException("User is not logged in.");
                 }
                 var bookings = await _customerService.GetCustomerBookingsAsync(int.Parse(customerId));
+
+                if(!bookings.Any())
+                {
+                    return NotFound(new ErrorModel(404, "No bookings found."));
+                }
                 return Ok(bookings);
             }
             catch (NotLoggedInException ex)
             {
+                _logger.LogError(ex.Message);
                 return Unauthorized(new ErrorModel(401, ex.Message));
             }
             catch (NoSuchCustomerFoundException ex)
             {
+                _logger.LogError(ex.Message);
                 return NotFound(new ErrorModel(404, ex.Message));
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex.Message);
                 return StatusCode(500, new ErrorModel(500, ex.Message));
             }
         }

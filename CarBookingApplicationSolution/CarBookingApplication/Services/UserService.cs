@@ -16,12 +16,13 @@ namespace CarBookingApplication.Services
         private readonly IRepository<int, User> _userRepo;
         private readonly IRepository<int, Customer> _customerRepo;
         private readonly ITokenService _tokenService;
-
-        public UserService(IRepository<int, User> userRepo, IRepository<int, Customer> customerRepo, ITokenService tokenService)
+        private readonly ILogger<UserService> _logger;
+        public UserService(IRepository<int, User> userRepo, IRepository<int, Customer> customerRepo, ITokenService tokenService, ILogger<UserService> logger)
         {
             _userRepo = userRepo;
             _customerRepo = customerRepo;
             _tokenService = tokenService;
+            _logger = logger;
         }
         public async Task<LoginReturnDTO> Login(UserLoginDTO loginDTO)
         {
@@ -189,7 +190,8 @@ namespace CarBookingApplication.Services
             }
             catch (Exception ex)
             {
-                // Log generic exception
+                _logger.LogError(ex.Message);
+
                 throw new UserUpdateStatusFailedException("Unable to activate user at this moment.");
             }
         }

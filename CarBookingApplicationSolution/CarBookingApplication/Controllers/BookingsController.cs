@@ -9,6 +9,7 @@ using CarBookingApplication.Exceptions;
 using CarBookingApplication.Models.DTOs.QueryDTOs;
 using System.Security.Claims;
 using CarBookingApplication.Exceptions.Customer;
+using CarBookingApplication.Exceptions.Car;
 
 namespace CarBookingApplication.Controllers
 {
@@ -17,10 +18,12 @@ namespace CarBookingApplication.Controllers
     public class BookingsController : ControllerBase
     {
         private readonly IBookingService _bookingService;
+        private readonly ILogger<BookingsController> _logger;
 
-        public BookingsController(IBookingService bookingService)
+        public BookingsController(IBookingService bookingService, ILogger<BookingsController> logger)
         {
             _bookingService = bookingService;
+            _logger = logger;
         }
 
         /// <summary>
@@ -43,14 +46,20 @@ namespace CarBookingApplication.Controllers
                 }
 
                 var bookings = await _bookingService.GetAllBookingsAsync(int.Parse(customerId));
-                return Ok(bookings);
+
+                if (bookings.Any())
+                    return Ok(bookings);
+                else
+                    return Ok("No Bookings found!");
             }
             catch (NotLoggedInException ex)
             {
+                _logger.LogError(ex.Message);
                 return Unauthorized(new ErrorModel(401, ex.Message));
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex.Message);
                 return StatusCode(500, new ErrorModel(500, ex.Message));
             }
         }
@@ -65,6 +74,7 @@ namespace CarBookingApplication.Controllers
         [ProducesResponseType(typeof(Booking), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
         public async Task<ActionResult<Booking>> GetBookingById(int id)
         {
             try
@@ -80,10 +90,22 @@ namespace CarBookingApplication.Controllers
             }
             catch (NotLoggedInException ex)
             {
+                _logger.LogError(ex.Message);
+                return Unauthorized(new ErrorModel(401, ex.Message));
+            }
+            catch(NoSuchBookingFoundException ex)
+            {
+                _logger.LogError(ex.Message);
+                return BadRequest(ex.Message);
+            }
+            catch(UnauthorizedAccessException ex)
+            {
+                _logger.LogError(ex.Message);
                 return Unauthorized(new ErrorModel(401, ex.Message));
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex.Message);
                 return StatusCode(500, new ErrorModel(500, ex.Message));
             }
         }
@@ -99,7 +121,7 @@ namespace CarBookingApplication.Controllers
         [ProducesResponseType(typeof(BookingResponseDTO), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<BookingResponseDTO>> CancelBooking(int BookingId)
+        public async Task<ActionResult<BookingResponseDTO>> CancelBooking(int id)
         {
             try
             {
@@ -109,7 +131,7 @@ namespace CarBookingApplication.Controllers
                     throw new NotLoggedInException("User is not logged in.");
                 }
 
-                var result = await _bookingService.CancelBookingAsync(BookingId, int.Parse(customerId));
+                var result = await _bookingService.CancelBookingAsync(id, int.Parse(customerId));
                 if (result.Success)
                 {
                     return Ok(result);
@@ -121,10 +143,22 @@ namespace CarBookingApplication.Controllers
             }
             catch (NotLoggedInException ex)
             {
+                _logger.LogError(ex.Message);
+                return Unauthorized(new ErrorModel(401, ex.Message));
+            }
+            catch(NoSuchBookingFoundException ex)
+            {
+                _logger.LogError(ex.Message);
+                return BadRequest(new BookingResponseDTO { Success = false, Message = ex.Message });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                _logger.LogError(ex.Message);
                 return Unauthorized(new ErrorModel(401, ex.Message));
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex.Message);
                 return StatusCode(500, new ErrorModel(500, ex.Message));
             }
         }
@@ -137,6 +171,9 @@ namespace CarBookingApplication.Controllers
         [Authorize]
         [HttpPost("book")]
         [ProducesResponseType(typeof(BookingDTO), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status409Conflict)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<BookingResponseDTO>> BookCar([FromBody] BookingDTO bookingRequest)
         {
@@ -151,20 +188,36 @@ namespace CarBookingApplication.Controllers
                 var result = await _bookingService.BookCarAsync(int.Parse(customerId), bookingRequest);
                 return Ok(result);
             }
+            catch (NotLoggedInException ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status401Unauthorized, new ErrorModel(401, ex.Message));
+            }
+            catch (NoSuchCarFoundException ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status404NotFound, new ErrorModel(404, ex.Message));
+            }
+            catch (CarNotAvailableForBookingException ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status409Conflict, new ErrorModel(409, ex.Message));
+            }
             catch (Exception ex)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError, new ErrorModel(500, ex.Message));
+                _logger.LogError(ex.Message);
+                return StatusCode(StatusCodes.Status500InternalServerError, new ErrorModel(500, "An unexpected error occurred while processing the booking."));
             }
         }
 
 
 
-        [HttpPost("{bookingId}/extend")]
+        [HttpPost("{Id}/extend")]
         [ProducesResponseType(typeof(BookingResponseDTO), 200)]
         [ProducesResponseType(typeof(BookingResponseDTO), 400)]
         [ProducesResponseType(typeof(BookingResponseDTO), 404)]
         [ProducesResponseType(typeof(BookingResponseDTO), 500)]
-        public async Task<IActionResult> ExtendBooking(int bookingId, [FromBody] ExtendBookingDTO extendBookingDTO)
+        public async Task<IActionResult> ExtendBooking(int Id, [FromBody] ExtendBookingDTO extendBookingDTO)
         {
             try
             {
@@ -174,28 +227,32 @@ namespace CarBookingApplication.Controllers
                     throw new NotLoggedInException("User is not logged in.");
                 }
 
-                var result = await _bookingService.ExtendBookingAsync(bookingId, extendBookingDTO.NewEndDate, int.Parse(customerId));
+                var result = await _bookingService.ExtendBookingAsync(Id, extendBookingDTO.NewEndDate, int.Parse(customerId));
                 return Ok(result);
             }
             catch (NoSuchBookingFoundException ex)
             {
+                _logger.LogError(ex.Message);
                 return NotFound(new BookingResponseDTO { Success = false, Message = ex.Message });
             }
             catch (NoSuchCustomerFoundException ex)
             {
+                _logger.LogError(ex.Message);
                 return BadRequest(new BookingResponseDTO { Success = false, Message = ex.Message });
             }
             catch (UnauthorizedAccessException ex)
             {
+                _logger.LogError(ex.Message);
                 return StatusCode(403, new BookingResponseDTO { Success = false, Message = ex.Message });
             }
-            catch (InvalidOperationException ex)
+            catch (InvalidExtensionDateException ex)
             {
+                _logger.LogError(ex.Message);
                 return BadRequest(new BookingResponseDTO { Success = false, Message = ex.Message });
             }
             catch (Exception ex)
             {
-                // Log the exception
+                _logger.LogError(ex.Message);
                 return StatusCode(500, new BookingResponseDTO { Success = false, Message = "An unexpected error occurred." });
             }
         }

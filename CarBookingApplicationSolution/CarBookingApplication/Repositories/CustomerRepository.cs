@@ -34,7 +34,7 @@ namespace CarBookingApplication.Repositories
 
         public Task<Customer> GetByKey(int key)
         {
-            var Customer = _context.Customers.FirstOrDefaultAsync(e => e.Id == key);
+            var Customer = _context.Customers.Include(c => c.Bookings).FirstOrDefaultAsync(e => e.Id == key);
             return Customer;
         }
 

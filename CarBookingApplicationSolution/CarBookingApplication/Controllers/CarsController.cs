@@ -17,10 +17,11 @@ namespace CarBookingApplication.Controllers
     public class CarsController : ControllerBase
     {
         private readonly ICarService _carService;
-
-        public CarsController(ICarService carService)
+        private readonly ILogger<CarsController> _logger;
+        public CarsController(ICarService carService, ILogger<CarsController> logger)
         {
             _carService = carService;
+            _logger = logger;
         }
 
         /// <summary>
@@ -46,6 +47,7 @@ namespace CarBookingApplication.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex, ex.Message);
                 return StatusCode(StatusCodes.Status500InternalServerError, new ErrorModel(500, ex.Message));
             }
         }
@@ -80,10 +82,12 @@ namespace CarBookingApplication.Controllers
             }
             catch (NoSuchCarFoundException ex)
             {
+                _logger.LogError(ex, ex.Message);
                 return NotFound(new ErrorModel(404, ex.Message));
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex.Message);
                 return StatusCode(StatusCodes.Status500InternalServerError, new ErrorModel(500, ex.Message));
             }
         }
@@ -112,10 +116,12 @@ namespace CarBookingApplication.Controllers
             }
             catch (NoSuchCarFoundException ex)
             {
+                _logger.LogError(ex.Message);
                 return NotFound(new ErrorModel(404, ex.Message));
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex.Message);
                 return StatusCode(StatusCodes.Status500InternalServerError, new ErrorModel(500, ex.Message));
             }
         }
@@ -140,6 +146,7 @@ namespace CarBookingApplication.Controllers
             }
             catch (Exception ex)
             {
+                _logger.LogError(ex.Message);
                 return StatusCode(StatusCodes.Status500InternalServerError, new ErrorModel(500, ex.Message));
             }
         }
