@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 
 namespace CarBookingUnitTest.ServicesTest
 {
-    [TestFixture]
     public class CarServiceTest
     {
         private Mock<IRepository<int, Car>> _mockCarRepository;

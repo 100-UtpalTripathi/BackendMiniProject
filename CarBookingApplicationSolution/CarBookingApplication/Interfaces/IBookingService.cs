@@ -12,5 +12,8 @@ namespace CarBookingApplication.Interfaces
         Task<Booking> BookCarAsync(int customerId, BookingDTO bookingRequest);
 
 
+        Task<BookingResponseDTO> ExtendBookingAsync(int bookingId, DateTime newEndDate, int customerId);
+
+
     }
 }

@@ -28,6 +28,7 @@ namespace EmployeeRequestTrackerAPI.Controllers
         [HttpPost("Login")]
         [ProducesResponseType(typeof(LoginReturnDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status401Unauthorized)]
+        
         public async Task<ActionResult<LoginReturnDTO>> Login(UserLoginDTO userLoginDTO)
         {
             try
@@ -73,6 +74,7 @@ namespace EmployeeRequestTrackerAPI.Controllers
         [HttpPut("activate")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status403Forbidden)]
         public async Task<ActionResult> ActivateUser([FromBody] UserActivationDTO userActivationDto)
         {
             try

@@ -18,6 +18,10 @@ namespace CarBookingApplication.Models
         [StringLength(100, ErrorMessage = "Country can't be longer than 100 characters.")]
         public string Country { get; set; }
 
+        [Required(ErrorMessage = "Pincode is required.")]
+        [StringLength(6, ErrorMessage = "Pincode can't be longer than 6 characters.")]
+        public string Pincode { get; set; }
+
         public ICollection<Car>? Cars { get; set; }
     }
 }

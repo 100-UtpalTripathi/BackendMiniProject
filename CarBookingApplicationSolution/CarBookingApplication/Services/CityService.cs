@@ -17,7 +17,8 @@ public class CityService : ICityService
         {
             Name = cityDto.Name,
             State = cityDto.State,
-            Country = cityDto.Country
+            Country = cityDto.Country,
+            Pincode = cityDto.Pincode
         };
 
         await _cityRepository.Add(city);
@@ -36,6 +37,7 @@ public class CityService : ICityService
         city.Name = cityDto.Name;
         city.State = cityDto.State;
         city.Country = cityDto.Country;
+        city.Pincode = cityDto.Pincode;
 
         await _cityRepository.Update(city);
         return new CityResponseDTO { Success = true, Message = "City updated successfully." };
@@ -53,14 +55,9 @@ public class CityService : ICityService
         return new CityResponseDTO { Success = true, Message = "City deleted successfully." };
     }
 
-    public async Task<IEnumerable<CityDTO>> GetAllCitiesAsync()
+    public async Task<IEnumerable<City>> GetAllCitiesAsync()
     {
         var cities = await _cityRepository.Get();
-        return cities.Select(c => new CityDTO
-        {
-            Name = c.Name,
-            State = c.State,
-            Country = c.Country
-        });
+        return cities;
     }
 }

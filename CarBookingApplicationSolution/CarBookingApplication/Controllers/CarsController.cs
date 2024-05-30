@@ -29,7 +29,7 @@ namespace CarBookingApplication.Controllers
         /// <param name="carDto">Car details</param>
         /// <returns>Car addition result</returns>
         [Authorize(Roles = "Admin")]
-        [HttpPost]
+        [HttpPost("add")]
         [ProducesResponseType(typeof(CarResponseDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(CarResponseDTO), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
@@ -57,7 +57,7 @@ namespace CarBookingApplication.Controllers
         /// <param name="carDto">Updated car details</param>
         /// <returns>Car update result</returns>
         [Authorize(Roles = "Admin")]
-        [HttpPut("{id}")]
+        [HttpPut("edit/{id}")]
         [ProducesResponseType(typeof(CarResponseDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(CarResponseDTO), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
@@ -94,7 +94,7 @@ namespace CarBookingApplication.Controllers
         /// <param name="id">Car ID</param>
         /// <returns>Car deletion result</returns>
         [Authorize(Roles = "Admin")]
-        [HttpDelete("{id}")]
+        [HttpDelete("delete/{id}")]
         [ProducesResponseType(typeof(CarResponseDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(CarResponseDTO), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
@@ -124,7 +124,7 @@ namespace CarBookingApplication.Controllers
         /// Get all cars
         /// </summary>
         /// <returns>List of cars</returns>
-        [HttpGet]
+        [HttpGet("all")]
         [ProducesResponseType(typeof(IEnumerable<CarDTO>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<IEnumerable<CarDTO>>> GetAllCars()

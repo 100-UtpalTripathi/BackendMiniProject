@@ -31,7 +31,7 @@ namespace CarBookingUnitTest.RepositoryTest
             using (var context = new CarBookingContext(_options))
             {
                 var repository = new CityRepository(context);
-                var city = new City { Id = 3, Name = "City3", State = "State3", Country = "Country3" };
+                var city = new City { Id = 3, Name = "City3", State = "State3", Country = "Country3", Pincode = "123456" };
 
                 // Act
                 var addedCity = await repository.Add(city);
@@ -51,7 +51,7 @@ namespace CarBookingUnitTest.RepositoryTest
                 var repository = new CityRepository(context);
 
                 // Add a city to the database
-                var city = new City { Id = 4, Name = "City4", State = "State4", Country = "Country4" };
+                var city = new City { Id = 4, Name = "City4", State = "State4", Country = "Country4",Pincode = "123456" };
                 await context.Cities.AddAsync(city);
                 await context.SaveChangesAsync();
 
@@ -86,7 +86,7 @@ namespace CarBookingUnitTest.RepositoryTest
             {
                 var repository = new CityRepository(context);
 
-                var city = new City { Id = 24, Name = "City1", State = "State1", Country = "Country1" };
+                var city = new City { Id = 24, Name = "City1", State = "State1", Country = "Country1", Pincode = "123456" };
 
                 await context.Cities.AddAsync(city);
                 await context.SaveChangesAsync();
@@ -123,8 +123,8 @@ namespace CarBookingUnitTest.RepositoryTest
             {
                 var repository = new CityRepository(context);
 
-                var city = new City { Id = 100, Name = "City100", State = "State100", Country = "Country100" };
-                var city1 = new City { Id = 101, Name = "City101", State = "State101", Country = "Country101" };
+                var city = new City { Id = 100, Name = "City100", State = "State100", Country = "Country100", Pincode = "123456" };
+                var city1 = new City { Id = 101, Name = "City101", State = "State101", Country = "Country101", Pincode = "123456" };
 
                 await context.Cities.AddAsync(city);
                 await context.Cities.AddAsync(city1);
@@ -146,7 +146,7 @@ namespace CarBookingUnitTest.RepositoryTest
             using (var context = new CarBookingContext(_options))
             {
                 var repository = new CityRepository(context);
-                var city = new City { Name = "New12City", State = "UpdatedState", Country = "UpdatedCountry" };
+                var city = new City { Name = "New12City", State = "UpdatedState", Country = "UpdatedCountry" , Pincode = "123456" };
                 var addedCity = await repository.Add(city);
 
                 addedCity.Name = "UpdatedCity";
@@ -180,7 +180,7 @@ namespace CarBookingUnitTest.RepositoryTest
             {
                 var repository = new CityRepository(context);
 
-                var city = new City { Name = "UpdatedCity", State = "UpdatedState", Country = "UpdatedCountry" };
+                var city = new City { Name = "UpdatedCity", State = "UpdatedState", Country = "UpdatedCountry", Pincode = "123456" };
                 var retrievedCity = await repository.Add(city);
 
                 await repository.DeleteByKey(retrievedCity.Id);

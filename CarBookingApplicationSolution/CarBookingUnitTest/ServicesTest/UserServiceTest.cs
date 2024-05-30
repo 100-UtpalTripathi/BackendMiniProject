@@ -78,7 +78,7 @@ namespace CarBookingUnitTest.ServicesTest
 
             // Assert
             Assert.IsNotNull(result);
-            Assert.AreEqual(1, result.CustomerID);
+            Assert.AreEqual(1, result.Id);
             Assert.AreEqual("Customer", result.Role);
             Assert.AreEqual("token", result.Token);
         }

@@ -50,10 +50,10 @@ public class QueryService : IQueryService
     public async Task<IEnumerable<Query>> GetAllQueriesAsync()
     {
         var queries = await _queryRepository.Get();
-        return queries;
+        return queries.Where(q => q.Status == "Open");
     }
 
-    public async Task<Query> GetQueryByIdAsync(int id, int customerId)
+    public async Task<Query> GetQueryByIdAsync(int queryId, int customerId)
     {
         var customer = await _customerRepository.GetByKey(customerId);
         if (customer == null)
@@ -61,7 +61,7 @@ public class QueryService : IQueryService
             throw new NoSuchCustomerFoundException("Customer not found.");
         }
 
-        var query = await _queryRepository.GetByKey(id);
+        var query = await _queryRepository.GetByKey(queryId);
         if (query == null)
         {
             throw new NoSuchQueryFoundException("Query not found.");
@@ -74,9 +74,9 @@ public class QueryService : IQueryService
         return query;
     }
 
-    public async Task<QueryResponseDTO> RespondToQueryAsync(int id, string response)
+    public async Task<QueryResponseDTO> RespondToQueryAsync(int queryId, string response)
     {
-        var query = await _queryRepository.GetByKey(id);
+        var query = await _queryRepository.GetByKey(queryId);
         if (query == null)
         {
             return new QueryResponseDTO { Success = false, Message = "Query not found." };
@@ -90,9 +90,9 @@ public class QueryService : IQueryService
         return new QueryResponseDTO { Success = true, Message = "Query responded successfully." };
     }
 
-    public async Task<QueryResponseDTO> CloseQueryAsync(int id)
+    public async Task<QueryResponseDTO> CloseQueryAsync(int queryId)
     {
-        var query = await _queryRepository.GetByKey(id);
+        var query = await _queryRepository.GetByKey(queryId);
         if (query == null)
         {
             return new QueryResponseDTO { Success = false, Message = "Query not found." };

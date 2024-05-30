@@ -12,8 +12,6 @@ namespace CarBookingApplication.Models.DTOs.QueryDTOs
         [Required]
         [StringLength(1000, ErrorMessage = "Message cannot be longer than 1000 characters.")]
         public string Message { get; set; }
-
-        public string Status { get; set; } = "Open";
     }
 }
 

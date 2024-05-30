@@ -16,7 +16,6 @@ namespace CarBookingApplication.Repositories
         }
         public async Task<User> Add(User item)
         {
-            item.Status = "Disabled";
             _context.Add(item);
             await _context.SaveChangesAsync();
             return item;

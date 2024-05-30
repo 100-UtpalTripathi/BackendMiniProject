@@ -89,8 +89,8 @@ namespace CarBookingUnitTest.ServicesTest
             // Arrange
             var queries = new List<Query>
             {
-                new Query { Id = 1, Subject = "Subject1", Message = "Message1" },
-                new Query { Id = 2, Subject = "Subject2", Message = "Message2" }
+                new Query { Id = 1, Subject = "Subject1", Message = "Message1", Status = "Open" },
+                new Query { Id = 2, Subject = "Subject2", Message = "Message2", Status = "Open" }
             };
 
             _mockQueryRepository.Setup(repo => repo.Get()).ReturnsAsync(queries);

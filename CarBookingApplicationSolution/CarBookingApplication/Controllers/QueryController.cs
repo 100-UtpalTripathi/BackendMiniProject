@@ -29,7 +29,7 @@ namespace CarBookingApplication.Controllers
         /// <param name="queryDto">Query details</param>
         /// <returns>Query submission result</returns>
         [Authorize]
-        [HttpPost]
+        [HttpPost("add")]
         [ProducesResponseType(typeof(QueryResponseDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
@@ -46,7 +46,12 @@ namespace CarBookingApplication.Controllers
                 var result = await _queryService.SubmitQueryAsync(queryDto, int.Parse(customerId));
                 return Ok(result);
             }
+            
             catch (NotLoggedInException ex)
+            {
+                return Unauthorized(new ErrorModel(401, ex.Message));
+            }
+            catch (UnauthorizedAccessException ex)
             {
                 return Unauthorized(new ErrorModel(401, ex.Message));
             }
@@ -61,7 +66,7 @@ namespace CarBookingApplication.Controllers
         /// </summary>
         /// <returns>List of queries</returns>
         [Authorize(Roles = "Admin")]
-        [HttpGet]
+        [HttpGet("get/all")]
         [ProducesResponseType(typeof(IList<Query>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
         public async Task<IActionResult> GetAllQueries()
@@ -83,7 +88,7 @@ namespace CarBookingApplication.Controllers
         /// <param name="id">Query ID</param>
         /// <returns>Query details</returns>
         [Authorize]
-        [HttpGet("{id}")]
+        [HttpGet("get/{id}")]
         [ProducesResponseType(typeof(Query), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status401Unauthorized)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
@@ -109,10 +114,15 @@ namespace CarBookingApplication.Controllers
             {
                 return NotFound(new ErrorModel(404, ex.Message));
             }
+            catch(UnauthorizedAccessException ex)
+            {
+                return Unauthorized(new ErrorModel(401, ex.Message));
+            }
             catch (Exception ex)
             {
                 return StatusCode(500, new ErrorModel(500, ex.Message));
             }
+            
         }
 
         /// <summary>

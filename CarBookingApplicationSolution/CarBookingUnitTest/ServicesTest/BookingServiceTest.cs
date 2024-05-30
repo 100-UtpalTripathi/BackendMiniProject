@@ -349,5 +349,72 @@ namespace CarBookingUnitTest.ServicesTest
         }
 
 
+
+        [Test]
+        public async Task ExtendBookingAsync_ValidBookingAndCustomer_ExtendsSuccessfully()
+        {
+            // Arrange
+            var customerId = 1;
+            var bookingId = 1;
+            var booking = new Booking { Id = bookingId, CustomerId = customerId, EndDate = DateTime.Now.AddDays(3) }; // Current end date is 3 days from now
+            var newEndDate = DateTime.Now.AddDays(5); // New end date is 5 days from now
+
+            _mockBookingRepository.Setup(repo => repo.GetByKey(bookingId)).ReturnsAsync(booking);
+
+            // Act
+            var result = await _bookingService.ExtendBookingAsync(bookingId, newEndDate, customerId);
+
+            // Assert
+            Assert.IsTrue(result.Success);
+            Assert.AreEqual("Booking timings extended successfully.", result.Message);
+            Assert.AreEqual(newEndDate, booking.EndDate); // Check if the end date is updated
+            _mockBookingRepository.Verify(repo => repo.Update(booking), Times.Once);
+        }
+
+        [Test]
+        public async Task ExtendBookingAsync_BookingNotFound_ThrowsNoSuchBookingFoundException()
+        {
+            // Arrange
+            var customerId = 1;
+            var bookingId = 1;
+
+            // Setup the mock repository to return null for the booking
+            _mockBookingRepository.Setup(repo => repo.GetByKey(bookingId)).ReturnsAsync((Booking)null);
+
+            // Act & Assert
+            var ex = Assert.ThrowsAsync<NoSuchBookingFoundException>(() => _bookingService.ExtendBookingAsync(bookingId, DateTime.Now.AddDays(5), customerId));
+        }
+
+        [Test]
+        public void ExtendBookingAsync_CustomerNotAuthorized_ThrowsUnauthorizedAccessException()
+        {
+            // Arrange
+            var customerId = 1;
+            var bookingId = 1;
+            var booking = new Booking { Id = bookingId, CustomerId = 2 }; // Booking belongs to a different customer
+
+            _mockBookingRepository.Setup(repo => repo.GetByKey(bookingId)).ReturnsAsync(booking);
+
+            // Act & Assert
+            Assert.ThrowsAsync<UnauthorizedAccessException>(() => _bookingService.ExtendBookingAsync(bookingId, DateTime.Now.AddDays(5), customerId));
+        }
+
+        [Test]
+        public void ExtendBookingAsync_NewEndDateBeforeCurrentEndDate_ThrowsInvalidExtensionDateException()
+        {
+            // Arrange
+            var customerId = 1;
+            var bookingId = 1;
+            var booking = new Booking { Id = bookingId, CustomerId = customerId, EndDate = DateTime.Now.AddDays(3) }; // Current end date is 3 days from now
+            var newEndDate = DateTime.Now.AddDays(1); // New end date is 1 day from now
+
+            _mockBookingRepository.Setup(repo => repo.GetByKey(bookingId)).ReturnsAsync(booking);
+
+            // Act & Assert
+            Assert.ThrowsAsync<InvalidExtensionDateException>(() => _bookingService.ExtendBookingAsync(bookingId, newEndDate, customerId));
+        }
+
+
+
     }
 }

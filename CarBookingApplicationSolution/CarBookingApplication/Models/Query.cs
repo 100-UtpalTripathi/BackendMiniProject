@@ -30,7 +30,7 @@ namespace CarBookingApplication.Models
         [DataType(DataType.DateTime, ErrorMessage = "Invalid date format.")]
         public DateTime CreatedDate { get; set; }
 
-        public DateTime? UpdatedDate { get; set; }
+        public DateTime? UpdatedDate { get; set; } = null;
 
     }
 }

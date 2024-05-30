@@ -1,4 +1,5 @@
 ﻿using CarBookingApplication.Models.DTOs.CityDTOs;
+using CarBookingApplication.Models;
 namespace CarBookingApplication.Interfaces
 {
     public interface ICityService
@@ -7,6 +8,6 @@ namespace CarBookingApplication.Interfaces
         Task<CityResponseDTO> EditCityAsync(int id, CityDTO cityDto);
         Task<CityResponseDTO> DeleteCityAsync(int id);
 
-        Task<IEnumerable<CityDTO>> GetAllCitiesAsync();
+        Task<IEnumerable<City>> GetAllCitiesAsync();
     }
 }

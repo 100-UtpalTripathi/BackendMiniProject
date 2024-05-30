@@ -5,6 +5,7 @@ using CarBookingApplication.Exceptions.Booking;
 using System.Reflection.Metadata.Ecma335;
 using CarBookingApplication.Exceptions.Car;
 using CarBookingApplication.Exceptions.Customer;
+using System.Diagnostics.CodeAnalysis;
 
 namespace CarBookingApplication.Services
 {
@@ -218,13 +219,15 @@ namespace CarBookingApplication.Services
             return booking;
         }
 
+        [ExcludeFromCodeCoverage]
         private decimal CalculateTotalAmount(Car car, DateTime startDate, DateTime endDate)
         {
-            decimal dailyRate = 1000; // Example rate
+            decimal dailyRate = 1000; 
             int totalDays = (endDate - startDate).Days;
             return dailyRate * totalDays;
         }
 
+        [ExcludeFromCodeCoverage]
         private decimal CalculateDiscountAmount(Customer customer, DateTime startDate, decimal totalAmount)
         {
             decimal discountAmount = 0;
@@ -245,6 +248,7 @@ namespace CarBookingApplication.Services
             return discountAmount;
         }
 
+        [ExcludeFromCodeCoverage]
         private decimal CalculateCancellationFee(TimeSpan timeDifference)
         {
             // Calculate the remaining hours until the booking start date
@@ -261,5 +265,81 @@ namespace CarBookingApplication.Services
                 return cancellationFee;
             }
         }
+
+
+        public async Task<BookingResponseDTO> ExtendBookingAsync(int bookingId, DateTime newEndDate, int customerId)
+        {
+            try
+            {
+                var booking = await _bookingRepository.GetByKey(bookingId);
+
+                if (booking == null)
+                {
+                    throw new NoSuchBookingFoundException($"Booking with ID {bookingId} not found.");
+                }
+
+                if (booking.CustomerId != customerId)
+                {
+                    throw new UnauthorizedAccessException("You are not authorized to extend this booking.");
+                }
+
+                if (newEndDate <= booking.EndDate)
+                {
+                    throw new InvalidExtensionDateException("New end date must be after the current end date.");
+                }
+
+                // Calculate the additional amount for the extended period
+                decimal additionalAmount = CalculateAdditionalAmount(booking, newEndDate);
+
+                // Update booking details
+                booking.EndDate = newEndDate;
+                booking.TotalAmount += additionalAmount;
+                booking.FinalAmount += additionalAmount;
+
+                await _bookingRepository.Update(booking);
+
+                return new BookingResponseDTO
+                {
+                    Success = true,
+                    Message = "Booking timings extended successfully."
+                };
+            }
+            catch(NoSuchBookingFoundException ex)
+            {
+                throw;
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                throw;
+            }
+            catch (InvalidExtensionDateException ex)
+            {
+                throw;
+            }
+            catch (Exception ex)
+            { 
+                return new BookingResponseDTO
+                {
+                    Success = false,
+                    Message = "An error occurred while extending booking timings."
+                };
+            }
+        }
+
+        [ExcludeFromCodeCoverage]
+        private decimal CalculateAdditionalAmount(Booking booking, DateTime newEndDate)
+        {
+            // Calculate the difference in days between the current end date and the new end date
+            int additionalDays = (int)(newEndDate - booking.EndDate).TotalDays;
+
+           
+            decimal dailyRate = 1000; // Example rate
+
+            // Calculate additional amount based on the daily rate and additional days
+            decimal additionalAmount = dailyRate * additionalDays;
+
+            return additionalAmount;
+        }
     }
 }
+

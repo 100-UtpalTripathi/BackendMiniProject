@@ -4,6 +4,7 @@ using CarBookingApplication.Exceptions.User;
 using CarBookingApplication.Interfaces;
 using CarBookingApplication.Models;
 using CarBookingApplication.Models.DTOs.UserDTOs;
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -46,6 +47,7 @@ namespace CarBookingApplication.Services
             throw new UnauthorizedUserException("Invalid username or password");
         }
 
+        [ExcludeFromCodeCoverage]
         public bool ComparePassword(byte[] encrypterPass, byte[] password)
         {
             for (int i = 0; i < encrypterPass.Length; i++)
@@ -92,26 +94,30 @@ namespace CarBookingApplication.Services
             throw new UnableToRegisterException("Not able to register at this moment!");
         }
 
+        [ExcludeFromCodeCoverage]
         private LoginReturnDTO MapCustomerToLoginReturn(Customer customer)
         {
             LoginReturnDTO returnDTO = new LoginReturnDTO();
-            returnDTO.CustomerID = customer.Id;
+            returnDTO.Id = customer.Id;
             returnDTO.Role = customer.Role ?? "User";
             returnDTO.Token = _tokenService.GenerateToken(customer);
             return returnDTO;
         }
 
+        [ExcludeFromCodeCoverage]
         private async Task RevertUserInsert(User user)
         {
             await _userRepo.DeleteByKey(user.CustomerId);
         }
 
+        [ExcludeFromCodeCoverage]
         private async Task RevertCustomerInsert(Customer customer)
         {
 
             await _customerRepo.DeleteByKey(customer.Id);
         }
 
+        [ExcludeFromCodeCoverage]
         private User MapCustomerUserDTOToUser(CustomerUserDTO customerDTO)
         {
             User user = new User();

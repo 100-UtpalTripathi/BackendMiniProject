@@ -8,6 +8,7 @@ using CarBookingApplication.Exceptions.Booking;
 using CarBookingApplication.Exceptions;
 using CarBookingApplication.Models.DTOs.QueryDTOs;
 using System.Security.Claims;
+using CarBookingApplication.Exceptions.Customer;
 
 namespace CarBookingApplication.Controllers
 {
@@ -153,6 +154,49 @@ namespace CarBookingApplication.Controllers
             catch (Exception ex)
             {
                 return StatusCode(StatusCodes.Status500InternalServerError, new ErrorModel(500, ex.Message));
+            }
+        }
+
+
+
+        [HttpPost("{bookingId}/extend")]
+        [ProducesResponseType(typeof(BookingResponseDTO), 200)]
+        [ProducesResponseType(typeof(BookingResponseDTO), 400)]
+        [ProducesResponseType(typeof(BookingResponseDTO), 404)]
+        [ProducesResponseType(typeof(BookingResponseDTO), 500)]
+        public async Task<IActionResult> ExtendBooking(int bookingId, [FromBody] ExtendBookingDTO extendBookingDTO)
+        {
+            try
+            {
+                var customerId = User.FindFirstValue("eid");
+                if (customerId == null)
+                {
+                    throw new NotLoggedInException("User is not logged in.");
+                }
+
+                var result = await _bookingService.ExtendBookingAsync(bookingId, extendBookingDTO.NewEndDate, int.Parse(customerId));
+                return Ok(result);
+            }
+            catch (NoSuchBookingFoundException ex)
+            {
+                return NotFound(new BookingResponseDTO { Success = false, Message = ex.Message });
+            }
+            catch (NoSuchCustomerFoundException ex)
+            {
+                return BadRequest(new BookingResponseDTO { Success = false, Message = ex.Message });
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                return StatusCode(403, new BookingResponseDTO { Success = false, Message = ex.Message });
+            }
+            catch (InvalidOperationException ex)
+            {
+                return BadRequest(new BookingResponseDTO { Success = false, Message = ex.Message });
+            }
+            catch (Exception ex)
+            {
+                // Log the exception
+                return StatusCode(500, new BookingResponseDTO { Success = false, Message = "An unexpected error occurred." });
             }
         }
     }

@@ -27,7 +27,7 @@ namespace CarBookingApplication.Controllers
         /// </summary>
         /// <param name="cityDto">City details</param>
         /// <returns>City addition result</returns>
-        [HttpPost]
+        [HttpPost("add")]
         [ProducesResponseType(typeof(CityResponseDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(CityResponseDTO), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
@@ -54,7 +54,7 @@ namespace CarBookingApplication.Controllers
         /// <param name="id">City ID</param>
         /// <param name="cityDto">Updated city details</param>
         /// <returns>City update result</returns>
-        [HttpPut("{id}")]
+        [HttpPut("edit/{id}")]
         [ProducesResponseType(typeof(CityResponseDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(CityResponseDTO), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
@@ -85,7 +85,7 @@ namespace CarBookingApplication.Controllers
         /// </summary>
         /// <param name="id">City ID</param>
         /// <returns>City deletion result</returns>
-        [HttpDelete("{id}")]
+        [HttpDelete("delete/{id}")]
         [ProducesResponseType(typeof(CityResponseDTO), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(CityResponseDTO), StatusCodes.Status400BadRequest)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
@@ -115,14 +115,19 @@ namespace CarBookingApplication.Controllers
         /// Get all cities
         /// </summary>
         /// <returns>List of cities</returns>
-        [HttpGet]
-        [ProducesResponseType(typeof(IList<CityDTO>), StatusCodes.Status200OK)]
+        [HttpGet("all")]
+        [ProducesResponseType(typeof(IList<City>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<IList<CityDTO>>> GetAllCities()
+        public async Task<ActionResult<IList<City>>> GetAllCities()
         {
             try
             {
                 var cities = await _cityService.GetAllCitiesAsync();
+
+                if(!cities.Any())
+                {
+                    return NoContent();
+                }
                 return Ok(cities);
             }
             catch (Exception ex)
