@@ -13,10 +13,24 @@ namespace CarBookingApplication.Services
 {
     public class UserService : IUserService
     {
+        #region Private Fields
+
         private readonly IRepository<int, User> _userRepo;
         private readonly IRepository<int, Customer> _customerRepo;
         private readonly ITokenService _tokenService;
         private readonly ILogger<UserService> _logger;
+
+        #endregion
+
+        #region Constructor
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="UserService"/> class.
+        /// </summary>
+        /// <param name="userRepo">The repository for user data.</param>
+        /// <param name="customerRepo">The repository for customer data.</param>
+        /// <param name="tokenService">The service responsible for token generation.</param>
+        /// <param name="logger">The logger for logging messages.</param>
         public UserService(IRepository<int, User> userRepo, IRepository<int, Customer> customerRepo, ITokenService tokenService, ILogger<UserService> logger)
         {
             _userRepo = userRepo;
@@ -24,6 +38,16 @@ namespace CarBookingApplication.Services
             _tokenService = tokenService;
             _logger = logger;
         }
+
+        #endregion
+
+        #region Login
+        /// <summary>
+        /// Logs in a user based on the provided login credentials.
+        /// </summary>
+        /// <param name="loginDTO">The DTO containing user login information.</param>
+        /// <returns>A DTO containing login details.</returns>
+
         public async Task<LoginReturnDTO> Login(UserLoginDTO loginDTO)
         {
             var userDB = await _userRepo.GetByKey(loginDTO.UserId);
@@ -48,6 +72,11 @@ namespace CarBookingApplication.Services
             throw new UnauthorizedUserException("Invalid username or password");
         }
 
+        #endregion
+
+        #region ComparePassword
+
+
         [ExcludeFromCodeCoverage]
         public bool ComparePassword(byte[] encrypterPass, byte[] password)
         {
@@ -60,6 +89,15 @@ namespace CarBookingApplication.Services
             }
             return true;
         }
+
+        #endregion
+
+        #region Register
+        /// <summary>
+        /// Registers a new customer.
+        /// </summary>
+        /// <param name="customerDTO">The DTO containing customer information.</param>
+        /// <returns>The registered customer.</returns>
 
         public async Task<Customer> Register(CustomerUserDTO customerDTO)
         {
@@ -95,6 +133,11 @@ namespace CarBookingApplication.Services
             throw new UnableToRegisterException("Not able to register at this moment!");
         }
 
+        #endregion
+
+        #region GetCustomerProfile
+
+
         [ExcludeFromCodeCoverage]
         private LoginReturnDTO MapCustomerToLoginReturn(Customer customer)
         {
@@ -105,11 +148,18 @@ namespace CarBookingApplication.Services
             return returnDTO;
         }
 
+        #endregion
+
+        #region RevertUserInsert
         [ExcludeFromCodeCoverage]
         private async Task RevertUserInsert(User user)
         {
             await _userRepo.DeleteByKey(user.CustomerId);
         }
+
+        #endregion
+
+        #region RevertCustomerInsert
 
         [ExcludeFromCodeCoverage]
         private async Task RevertCustomerInsert(Customer customer)
@@ -118,6 +168,10 @@ namespace CarBookingApplication.Services
             await _customerRepo.DeleteByKey(customer.Id);
         }
 
+        #endregion
+
+
+        #region MapCustomerUserDTOToUser
         [ExcludeFromCodeCoverage]
         private User MapCustomerUserDTOToUser(CustomerUserDTO customerDTO)
         {
@@ -129,8 +183,14 @@ namespace CarBookingApplication.Services
             return user;
         }
 
+        #endregion
 
-
+        #region UserActivation
+        /// <summary>
+        /// Activates or deactivates a user.
+        /// </summary>
+        /// <param name="userActivationDTO">The DTO containing user activation details.</param>
+        /// <returns>The updated user activation status.</returns>
 
         //  user activation logic
         public async Task<ReturnUserActivationDTO> UserActivation(UserActivationDTO userActivationDTO)
@@ -196,7 +256,10 @@ namespace CarBookingApplication.Services
             }
         }
 
+        #endregion
 
+
+        #region MapToCustomer
         public static Customer MapToCustomer(CustomerUserDTO customerDTO)
         {
             return new Customer
@@ -209,5 +272,7 @@ namespace CarBookingApplication.Services
                 Email = customerDTO.Email
             };
         }
+
+        #endregion
     }
 }

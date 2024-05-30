@@ -23,6 +23,7 @@ namespace CarBookingApplication.Controllers
             _logger = logger;
         }
 
+        #region Add-City
         /// <summary>
         /// Add a new city (Admin only)
         /// </summary>
@@ -50,6 +51,9 @@ namespace CarBookingApplication.Controllers
             }
         }
 
+        #endregion
+
+        #region Edit-City
         /// <summary>
         /// Edit an existing city (Admin only)
         /// </summary>
@@ -84,6 +88,11 @@ namespace CarBookingApplication.Controllers
             }
         }
 
+        #endregion
+
+
+        #region Delete-City
+
         /// <summary>
         /// Delete a city (Admin only)
         /// </summary>
@@ -117,6 +126,11 @@ namespace CarBookingApplication.Controllers
             }
         }
 
+        #endregion
+
+
+        #region Get all cities
+
         /// <summary>
         /// Get all cities
         /// </summary>
@@ -142,5 +156,7 @@ namespace CarBookingApplication.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, new ErrorModel(500, ex.Message));
             }
         }
+
+        #endregion
     }
 }

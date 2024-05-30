@@ -24,6 +24,8 @@ namespace CarBookingApplication.Controllers
             _logger = logger;
         }
 
+
+        #region Add-Car
         /// <summary>
         /// Add a new car (Admin only)
         /// </summary>
@@ -51,6 +53,11 @@ namespace CarBookingApplication.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, new ErrorModel(500, ex.Message));
             }
         }
+
+        #endregion
+
+
+        #region Edit-Car
 
         /// <summary>
         /// Edit an existing car (Admin only)
@@ -92,6 +99,10 @@ namespace CarBookingApplication.Controllers
             }
         }
 
+        #endregion
+
+
+        #region Delete-Car
         /// <summary>
         /// Delete a car (Admin only)
         /// </summary>
@@ -126,6 +137,11 @@ namespace CarBookingApplication.Controllers
             }
         }
 
+        #endregion
+
+
+        #region Get All Cars
+
         /// <summary>
         /// Get all cars
         /// </summary>
@@ -151,6 +167,7 @@ namespace CarBookingApplication.Controllers
             }
         }
 
+        #endregion
 
     }
 }

@@ -11,11 +11,24 @@ namespace CarBookingApplication.Services
 {
     public class BookingService : IBookingService
     {
+        #region Private Members
+
         private readonly IRepository<int, Booking> _bookingRepository;
         private readonly IRepository<int, Customer> _customerRepository;
         private readonly IRepository<int, Car> _carRepository;
         private readonly ILogger<BookingService> _logger;
 
+        #endregion
+
+        #region Constructor
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="BookingService"/> class.
+        /// </summary>
+        /// <param name="bookingRepository">The booking repository.</param>
+        /// <param name="customerRepository">The customer repository.</param>
+        /// <param name="CarRepository">The car repository.</param>
+        /// <param name="logger">The logger.</param>
         public BookingService(IRepository<int, Booking> bookingRepository, IRepository<int, Customer> customerRepository, IRepository<int, Car> CarRepository, ILogger<BookingService> logger)
         {
             _bookingRepository = bookingRepository;
@@ -24,11 +37,24 @@ namespace CarBookingApplication.Services
             _logger = logger;
         }
 
+        #endregion
+
+
+        #region Get-All-Bookings
+        /// <summary>
+        /// Retrieves all bookings asynchronously based on the customer ID.
+        /// </summary>
+        /// <param name="customerId">The customer identifier.</param>
+        /// <returns>A collection of bookings.</returns>
         public async Task<IEnumerable<Booking>> GetAllBookingsAsync(int customerId)
         {
             try
             {
                 var customer = await _customerRepository.GetByKey(customerId);
+                if(customer == null)
+                {
+                    throw new NoSuchCustomerFoundException("Customer not found.");
+                }
 
                 if (customer.Role == "Admin")
                 {
@@ -44,6 +70,10 @@ namespace CarBookingApplication.Services
                     return customerBookings;
                 }
             }
+            catch (NoSuchCustomerFoundException)
+            {
+                throw;
+            }
             catch (Exception)
             {
                 throw new NoBookingsFoundException("Error occurred while retrieving bookings.");
@@ -51,6 +81,15 @@ namespace CarBookingApplication.Services
 
         }
 
+        #endregion
+
+        #region Get-Booking-By-ID
+        /// <summary>
+        /// Retrieves a booking by its ID asynchronously.
+        /// </summary>
+        /// <param name="bookingId">The booking identifier.</param>
+        /// <param name="customerId">The customer identifier.</param>
+        /// <returns>The booking details.</returns>
 
         public async Task<Booking> GetBookingByIdAsync(int bookingId, int customerId)
         {
@@ -77,6 +116,17 @@ namespace CarBookingApplication.Services
             catch (UnauthorizedAccessException)
             { throw; }
         }
+
+        #endregion
+
+
+        #region Cancel-Booking
+        /// <summary>
+        /// Cancels a booking asynchronously.
+        /// </summary>
+        /// <param name="bookingId">The booking identifier.</param>
+        /// <param name="customerId">The customer identifier.</param>
+        /// <returns>The cancellation result.</returns>
 
         public async Task<BookingResponseDTO> CancelBookingAsync(int bookingId, int customerId)
         {
@@ -184,6 +234,16 @@ namespace CarBookingApplication.Services
             }
         }
 
+        #endregion
+
+
+        #region Book-Car
+        /// <summary>
+        /// Books a car asynchronously.
+        /// </summary>
+        /// <param name="customerId">The customer identifier.</param>
+        /// <param name="bookingRequest">The booking request details.</param>
+        /// <returns>The booking details.</returns>
         public async Task<Booking> BookCarAsync(int customerId, BookingDTO bookingRequest)
         {
             
@@ -229,6 +289,17 @@ namespace CarBookingApplication.Services
             return booking;
         }
 
+        #endregion
+
+        #region Calculate-Total-Amount
+        /// <summary>
+        /// Calculates the total amount for the booking.
+        /// </summary>
+        /// <param name="car">The car being booked.</param>
+        /// <param name="startDate">The start date of the booking.</param>
+        /// <param name="endDate">The end date of the booking.</param>
+        /// <returns>The total amount.</returns>
+
         [ExcludeFromCodeCoverage]
         private decimal CalculateTotalAmount(Car car, DateTime startDate, DateTime endDate)
         {
@@ -236,6 +307,17 @@ namespace CarBookingApplication.Services
             int totalDays = (endDate - startDate).Days;
             return dailyRate * totalDays;
         }
+
+        #endregion
+
+        #region Calculate-Discount-Amount
+        /// <summary>
+        /// Calculates the discount amount for the booking.
+        /// </summary>
+        /// <param name="customer">The customer making the booking.</param>
+        /// <param name="startDate">The start date of the booking.</param>
+        /// <param name="totalAmount">The total amount for the booking.</param>
+        /// <returns>The discount amount.</returns>
 
         [ExcludeFromCodeCoverage]
         private decimal CalculateDiscountAmount(Customer customer, DateTime startDate, decimal totalAmount)
@@ -259,6 +341,16 @@ namespace CarBookingApplication.Services
             return discountAmount;
         }
 
+        #endregion
+
+
+        #region Calculate-Cancellation-Fee
+        /// <summary>
+        /// Calculates the cancellation fee for the booking.
+        /// </summary>
+        /// <param name="timeDifference">The time difference between the booking start date and current date.</param>
+        /// <returns>The cancellation fee.</returns>
+
         [ExcludeFromCodeCoverage]
         private decimal CalculateCancellationFee(TimeSpan timeDifference)
         {
@@ -277,6 +369,16 @@ namespace CarBookingApplication.Services
             }
         }
 
+        #endregion
+
+        #region Extend-Booking
+        /// <summary>
+        /// Extends the booking timings asynchronously.
+        /// </summary>
+        /// <param name="bookingId">The booking identifier.</param>
+        /// <param name="newEndDate">The new end date.</param>
+        /// <param name="customerId">The customer identifier.</param>
+        /// <returns>The booking extension result.</returns>
 
         public async Task<BookingResponseDTO> ExtendBookingAsync(int bookingId, DateTime newEndDate, int customerId)
         {
@@ -344,6 +446,16 @@ namespace CarBookingApplication.Services
             }
         }
 
+        #endregion
+
+        #region Calculate-Additional-Amount
+        /// <summary>
+        /// Calculates the additional amount for extending the booking.
+        /// </summary>
+        /// <param name="booking">The booking to be extended.</param>
+        /// <param name="newEndDate">The new end date for the extended booking.</param>
+        /// <returns>The additional amount.</returns>
+
         [ExcludeFromCodeCoverage]
         private decimal CalculateAdditionalAmount(Booking booking, DateTime newEndDate)
         {
@@ -358,6 +470,8 @@ namespace CarBookingApplication.Services
 
             return additionalAmount;
         }
+
+        #endregion
     }
 }
 

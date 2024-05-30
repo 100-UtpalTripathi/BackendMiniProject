@@ -9,6 +9,8 @@ using CarBookingApplication.Interfaces;
 using CarBookingApplication.Models;
 using CarBookingApplication.Models.DTOs.BookingDTOs;
 using CarBookingApplication.Services;
+using log4net.Repository.Hierarchy;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 
@@ -20,6 +22,7 @@ namespace CarBookingUnitTest.ServicesTest
         private Mock<IRepository<int, Customer>> _mockCustomerRepository;
         private Mock<IRepository<int, Car>> _mockCarRepository;
         private BookingService _bookingService;
+        private Mock<ILogger<BookingService>> _mockLogger;
 
         [SetUp]
         public void Setup()
@@ -27,7 +30,9 @@ namespace CarBookingUnitTest.ServicesTest
             _mockBookingRepository = new Mock<IRepository<int, Booking>>();
             _mockCustomerRepository = new Mock<IRepository<int, Customer>>();
             _mockCarRepository = new Mock<IRepository<int, Car>>();
-            _bookingService = new BookingService(_mockBookingRepository.Object, _mockCustomerRepository.Object, _mockCarRepository.Object);
+            _mockLogger = new Mock<ILogger<BookingService>>();
+
+            _bookingService = new BookingService(_mockBookingRepository.Object, _mockCustomerRepository.Object, _mockCarRepository.Object, _mockLogger.Object);
         }
 
         [Test]
@@ -414,7 +419,25 @@ namespace CarBookingUnitTest.ServicesTest
             Assert.ThrowsAsync<InvalidExtensionDateException>(() => _bookingService.ExtendBookingAsync(bookingId, newEndDate, customerId));
         }
 
+        
 
+        [Test]
+        public async Task CancelBookingAsync_BookingAlreadyCancelled_ReturnsFailure()
+        {
+            // Arrange
+            var customerId = 1;
+            var bookingId = 1;
+            var booking = new Booking { Id = bookingId, CustomerId = customerId, Status = "Cancelled" };
+
+            _mockBookingRepository.Setup(repo => repo.GetByKey(bookingId)).ReturnsAsync(booking);
+
+            // Act
+            var result = await _bookingService.CancelBookingAsync(bookingId, customerId);
+
+            // Assert
+            Assert.IsFalse(result.Success);
+            Assert.AreEqual("Booking has already been cancelled.", result.Message);
+        }
 
     }
 }

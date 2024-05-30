@@ -27,6 +27,7 @@ namespace CarBookingApplication.Controllers
             _logger = logger;
         }
 
+        #region Customer-Profile
         /// <summary>
         /// Get customer profile
         /// </summary>
@@ -64,6 +65,10 @@ namespace CarBookingApplication.Controllers
                 return StatusCode(500, new ErrorModel(500, ex.Message));
             }
         }
+
+        #endregion
+
+        #region Edit-Customer-Profile
 
         /// <summary>
         /// Update customer profile
@@ -103,6 +108,11 @@ namespace CarBookingApplication.Controllers
                 return StatusCode(500, new ErrorModel(500, ex.Message));
             }
         }
+
+        #endregion
+
+
+        #region Customer-Bookings
 
         /// <summary>
         /// Get bookings of the customer
@@ -146,5 +156,7 @@ namespace CarBookingApplication.Controllers
                 return StatusCode(500, new ErrorModel(500, ex.Message));
             }
         }
+
+        #endregion
     }
 }

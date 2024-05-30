@@ -3,12 +3,32 @@ using CarBookingApplication.Models;
 using CarBookingApplication.Models.DTOs.CarDTOs;
 public class CarService : ICarService
 {
+    #region Private Fields
+
     private readonly IRepository<int, Car> _carRepository;
 
+    #endregion
+
+    #region Constructor
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CarService"/> class.
+    /// </summary>
+    /// <param name="carRepository">The car repository.</param>
     public CarService(IRepository<int, Car> carRepository)
     {
         _carRepository = carRepository;
     }
+
+    #endregion
+
+
+    #region Add-Car
+    /// <summary>
+    /// Adds a new car asynchronously.
+    /// </summary>
+    /// <param name="carDto">The car DTO containing car details.</param>
+    /// <returns>The result of the operation.</returns>
 
     public async Task<CarResponseDTO> AddCarAsync(CarDTO carDto)
     {
@@ -27,6 +47,16 @@ public class CarService : ICarService
         await _carRepository.Add(car);
         return new CarResponseDTO { Success = true, Message = "Car added successfully." };
     }
+
+    #endregion
+
+    #region Edit-Car
+    /// <summary>
+    /// Edits an existing car asynchronously.
+    /// </summary>
+    /// <param name="id">The identifier of the car to be edited.</param>
+    /// <param name="carDto">The car DTO containing updated car details.</param>
+    /// <returns>The result of the operation.</returns>
 
     public async Task<CarResponseDTO> EditCarAsync(int id, CarDTO carDto)
     {
@@ -49,6 +79,15 @@ public class CarService : ICarService
         return new CarResponseDTO { Success = true, Message = "Car updated successfully." };
     }
 
+    #endregion
+
+    #region Delete-Car
+    /// <summary>
+    /// Deletes a car asynchronously.
+    /// </summary>
+    /// <param name="id">The identifier of the car to be deleted.</param>
+    /// <returns>The result of the operation.</returns>
+
     public async Task<CarResponseDTO> DeleteCarAsync(int id)
     {
         var car = await _carRepository.GetByKey(id);
@@ -60,6 +99,14 @@ public class CarService : ICarService
         await _carRepository.DeleteByKey(id);
         return new CarResponseDTO { Success = true, Message = "Car deleted successfully." };
     }
+
+    #endregion
+
+    #region Get-All-Cars
+    /// <summary>
+    /// Retrieves all cars asynchronously.
+    /// </summary>
+    /// <returns>A collection of car DTOs.</returns>
 
     public async Task<IEnumerable<CarDTO>> GetAllCarsAsync()
     {
@@ -76,4 +123,6 @@ public class CarService : ICarService
             Category = c.Category
         });
     }
+
+    #endregion
 }

@@ -7,9 +7,20 @@ using System.Text;
 
 public class TokenService : ITokenService
 {
+    #region Fields
+
     private readonly string _secretKey;
     private readonly SymmetricSecurityKey _key;
 
+    #endregion
+
+    #region Constructor
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TokenService"/> class.
+    /// </summary>
+    /// <param name="configuration">The configuration containing the secret key.</param>
+    /// <exception cref="ArgumentException">Thrown when JWT secret key is missing or empty.</exception>
     public TokenService(IConfiguration configuration)
     {
         _secretKey = configuration?.GetSection("TokenKey")?.GetSection("JWT")?.Value;
@@ -19,6 +30,15 @@ public class TokenService : ITokenService
         }
         _key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_secretKey));
     }
+
+    #endregion
+
+    #region Generate-Token
+    /// <summary>
+    /// Generates a JWT token for the specified customer.
+    /// </summary>
+    /// <param name="customer">The customer for whom the token is generated.</param>
+    /// <returns>The generated JWT token.</returns>
 
     public string GenerateToken(Customer customer)
     {
@@ -40,4 +60,6 @@ public class TokenService : ITokenService
 
         return new JwtSecurityTokenHandler().WriteToken(token);
     }
+
+    #endregion
 }

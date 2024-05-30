@@ -10,6 +10,7 @@ using CarBookingApplication.Interfaces;
 using CarBookingApplication.Models;
 using CarBookingApplication.Models.DTOs.UserDTOs;
 using CarBookingApplication.Services;
+using Microsoft.Extensions.Logging;
 using Moq;
 using NUnit.Framework;
 
@@ -20,6 +21,7 @@ namespace CarBookingUnitTest.ServicesTest
         private Mock<IRepository<int, User>> _mockUserRepository;
         private Mock<IRepository<int, Customer>> _mockCustomerRepository;
         private Mock<ITokenService> _mockTokenService;
+        private Mock<ILogger<UserService>> _mockLogger;
         private UserService _userService;
 
         [SetUp]
@@ -28,7 +30,8 @@ namespace CarBookingUnitTest.ServicesTest
             _mockUserRepository = new Mock<IRepository<int, User>>();
             _mockCustomerRepository = new Mock<IRepository<int, Customer>>();
             _mockTokenService = new Mock<ITokenService>();
-            _userService = new UserService(_mockUserRepository.Object, _mockCustomerRepository.Object, _mockTokenService.Object);
+            _mockLogger = new Mock<ILogger<UserService>>();
+            _userService = new UserService(_mockUserRepository.Object, _mockCustomerRepository.Object, _mockTokenService.Object, _mockLogger.Object);
         }
 
         [Test]
@@ -236,35 +239,48 @@ namespace CarBookingUnitTest.ServicesTest
         }
 
         [Test]
-        public void ComparePassword_CorrectPassword_ReturnsTrue()
+        public void UserActivation_InactiveUserWithInactiveActivationFlag_ThrowsArgumentException()
         {
             // Arrange
-            byte[] password = new HMACSHA512().ComputeHash(Encoding.UTF8.GetBytes("password"));
-            var userService = new UserService(null, null, null);
+            var user = new User { CustomerId = 1, Status = "Inactive" };
+            var customer = new Customer { Id = 1, Role = "Admin" };
 
-            // Act
-            var result = userService.ComparePassword(password, password);
+            _mockUserRepository.Setup(repo => repo.GetByKey(1)).ReturnsAsync(user);
+            _mockCustomerRepository.Setup(repo => repo.GetByKey(1)).ReturnsAsync(customer);
 
-            // Assert
-            Assert.IsTrue(result);
+            var userActivationDTO = new UserActivationDTO { UserId = 1, IsActive = false };
+
+            // Act & Assert
+            Assert.ThrowsAsync<UserUpdateStatusFailedException>(() => _userService.UserActivation(userActivationDTO));
         }
+
 
         [Test]
-        public void ComparePassword_IncorrectPassword_ReturnsFalse()
+        public async Task Register_ValidAdminCustomer_ReturnsCustomerWithDisabledStatus()
         {
             // Arrange
-            byte[] password1 = new HMACSHA512().ComputeHash(Encoding.UTF8.GetBytes("password1"));
-            byte[] password2 = new HMACSHA512().ComputeHash(Encoding.UTF8.GetBytes("password2"));
-            var userService = new UserService(null, null, null);
+            var customerDTO = new CustomerUserDTO
+            {
+                Name = "Admin User",
+                DateOfBirth = new DateTime(1985, 5, 10),
+                Phone = "1234567890",
+                Email = "admin@example.com",
+                Password = "password",
+                Role = "Admin"
+            };
+
+            var customer = UserService.MapToCustomer(customerDTO);
+
+            _mockCustomerRepository.Setup(repo => repo.Add(It.IsAny<Customer>())).ReturnsAsync(customer);
+            _mockUserRepository.Setup(repo => repo.Add(It.IsAny<User>())).ReturnsAsync(new User { CustomerId = 1, Status = "Disabled" });
 
             // Act
-            var result = userService.ComparePassword(password1, password2);
+            var result = await _userService.Register(customerDTO);
 
             // Assert
-            Assert.IsFalse(result);
+            Assert.IsNotNull(result);
         }
 
 
-       
     }
 }

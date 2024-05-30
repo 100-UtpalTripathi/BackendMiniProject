@@ -24,6 +24,8 @@ namespace CarBookingApplication.Controllers
             _logger = logger;
         }
 
+
+        #region Submit-Query
         /// <summary>
         /// Submit a new query (Authenticated users only)
         /// </summary>
@@ -65,6 +67,10 @@ namespace CarBookingApplication.Controllers
             }
         }
 
+        #endregion
+
+        #region Get-All-Queries
+
         /// <summary>
         /// Get all queries (Admin only)
         /// </summary>
@@ -86,6 +92,10 @@ namespace CarBookingApplication.Controllers
                 return StatusCode(500, new ErrorModel(500, ex.Message));
             }
         }
+
+        #endregion
+
+        #region Get-Query-By-ID
 
         /// <summary>
         /// Get a query by its ID (Authenticated users only)
@@ -136,6 +146,10 @@ namespace CarBookingApplication.Controllers
             
         }
 
+        #endregion
+
+        #region Respond-To-Query
+
         /// <summary>
         /// Respond to a query (Admin only)
         /// </summary>
@@ -168,6 +182,10 @@ namespace CarBookingApplication.Controllers
             }
         }
 
+        #endregion
+
+        #region Close-Query
+
         /// <summary>
         /// Close a query (Admin only)
         /// </summary>
@@ -198,6 +216,8 @@ namespace CarBookingApplication.Controllers
                 return StatusCode(500, new ErrorModel(500, ex.Message));
             }
         }
+
+        #endregion
     }
 
 }

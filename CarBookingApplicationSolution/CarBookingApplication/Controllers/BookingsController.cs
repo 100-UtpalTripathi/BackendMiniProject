@@ -26,6 +26,8 @@ namespace CarBookingApplication.Controllers
             _logger = logger;
         }
 
+
+        #region Get all bookings
         /// <summary>
         /// Get all bookings (Admin only)
         /// </summary>
@@ -64,6 +66,9 @@ namespace CarBookingApplication.Controllers
             }
         }
 
+        #endregion
+
+        #region Get Bookings by Customer ID
         /// <summary>
         /// Get booking by ID
         /// </summary>
@@ -109,7 +114,9 @@ namespace CarBookingApplication.Controllers
                 return StatusCode(500, new ErrorModel(500, ex.Message));
             }
         }
+        #endregion
 
+        #region Cancel Booking
         /// <summary>
         /// Cancel a booking
         /// </summary>
@@ -162,6 +169,9 @@ namespace CarBookingApplication.Controllers
                 return StatusCode(500, new ErrorModel(500, ex.Message));
             }
         }
+        #endregion
+
+        #region Add-Booking
 
         /// <summary>
         /// Book a car
@@ -210,7 +220,9 @@ namespace CarBookingApplication.Controllers
             }
         }
 
+        #endregion
 
+        #region Extend Bookings
 
         [HttpPost("{Id}/extend")]
         [ProducesResponseType(typeof(BookingResponseDTO), 200)]
@@ -256,5 +268,7 @@ namespace CarBookingApplication.Controllers
                 return StatusCode(500, new BookingResponseDTO { Success = false, Message = "An unexpected error occurred." });
             }
         }
+
+        #endregion
     }
 }

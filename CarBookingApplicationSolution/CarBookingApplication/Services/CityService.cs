@@ -4,12 +4,32 @@ using CarBookingApplication.Models;
 
 public class CityService : ICityService
 {
+    #region Private Fields
+
     private readonly IRepository<int, City> _cityRepository;
 
+    #endregion
+
+    #region Constructor
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="CityService"/> class.
+    /// </summary>
+    /// <param name="cityRepository">The city repository.</param>
     public CityService(IRepository<int, City> cityRepository)
     {
         _cityRepository = cityRepository;
     }
+
+    #endregion
+
+
+    #region Add-City
+    /// <summary>
+    /// Adds a new city asynchronously.
+    /// </summary>
+    /// <param name="cityDto">The city DTO containing city details.</param>
+    /// <returns>The result of the operation.</returns>
 
     public async Task<CityResponseDTO> AddCityAsync(CityDTO cityDto)
     {
@@ -25,6 +45,16 @@ public class CityService : ICityService
 
         return new CityResponseDTO { Success = true, Message = "City added successfully." };
     }
+
+    #endregion
+
+    #region Edit-City
+    /// <summary>
+    /// Edits an existing city asynchronously.
+    /// </summary>
+    /// <param name="id">The identifier of the city to be edited.</param>
+    /// <param name="cityDto">The city DTO containing updated city details.</param>
+    /// <returns>The result of the operation.</returns>
 
     public async Task<CityResponseDTO> EditCityAsync(int id, CityDTO cityDto)
     {
@@ -43,6 +73,15 @@ public class CityService : ICityService
         return new CityResponseDTO { Success = true, Message = "City updated successfully." };
     }
 
+    #endregion
+
+    #region Delete-City
+    /// <summary>
+    /// Deletes a city asynchronously.
+    /// </summary>
+    /// <param name="id">The identifier of the city to be deleted.</param>
+    /// <returns>The result of the operation.</returns>
+
     public async Task<CityResponseDTO> DeleteCityAsync(int id)
     {
         var city = await _cityRepository.GetByKey(id);
@@ -55,9 +94,19 @@ public class CityService : ICityService
         return new CityResponseDTO { Success = true, Message = "City deleted successfully." };
     }
 
+    #endregion
+
+    #region Get-All-Cities
+    /// <summary>
+    /// Retrieves all cities asynchronously.
+    /// </summary>
+    /// <returns>A collection of cities.</returns>
+
     public async Task<IEnumerable<City>> GetAllCitiesAsync()
     {
         var cities = await _cityRepository.Get();
         return cities;
     }
+
+    #endregion
 }

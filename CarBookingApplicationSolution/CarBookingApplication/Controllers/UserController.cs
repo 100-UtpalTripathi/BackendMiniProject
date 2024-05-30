@@ -20,6 +20,7 @@ namespace EmployeeRequestTrackerAPI.Controllers
             _logger = logger;
         }
 
+        #region Login
         /// <summary>
         /// Login for users
         /// </summary>
@@ -43,6 +44,10 @@ namespace EmployeeRequestTrackerAPI.Controllers
             }
         }
 
+        #endregion
+
+        #region Register
+
         /// <summary>
         /// Register new users
         /// </summary>
@@ -64,6 +69,10 @@ namespace EmployeeRequestTrackerAPI.Controllers
                 return BadRequest(new ErrorModel(400, ex.Message));
             }
         }
+
+        #endregion
+
+        #region Activate-User
 
         /// <summary>
         /// Activate user (Admin only)
@@ -88,5 +97,7 @@ namespace EmployeeRequestTrackerAPI.Controllers
                 return BadRequest(new ErrorModel(400, ex.Message));
             }
         }
+
+        #endregion
     }
 }
