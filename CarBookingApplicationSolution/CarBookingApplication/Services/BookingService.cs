@@ -145,10 +145,12 @@ namespace CarBookingApplication.Services
                     };
                 }
 
-                // Check if the customer ID matches the booking's customer ID
-                if (booking.CustomerId != customerId)
+                var customer = await _customerRepository.GetByKey(customerId);
+
+                // Check if it is not admin and customer ID matches the booking's customer ID
+                if (customer.Role == "Customer" && booking.CustomerId != customerId)
                 {
-                    // If not, return an unauthorized access response
+                   
                     return new BookingResponseDTO
                     {
                         Message = "You are not authorized to cancel this booking.",
@@ -177,8 +179,8 @@ namespace CarBookingApplication.Services
                 // Calculate the time difference between the booking start date and the current date
                 var timeDifference = booking.StartDate.Subtract(DateTime.Now);
 
-                // Check if the cancellation falls within the 48-hour window
-                if (timeDifference.TotalHours >= 48)
+                // Check if the cancellation falls within the 48-hour window or the customer is an admin
+                if (timeDifference.TotalHours >= 48 || customer.Role == "Admin")
                 {
                     // No cancellation fee is applied
                     booking.Status = "Cancelled";
