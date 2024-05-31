@@ -11,6 +11,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using CarBookingApplication.Models.DTOs.CarRatingDTOs;
 using CarBookingApplication.Exceptions.Booking;
+using CarBookingApplication.Exceptions.Car;
+using CarBookingApplication.Exceptions.CarRating;
 
 namespace CarBookingUnitTest.ServicesTest
 {
@@ -233,5 +235,110 @@ namespace CarBookingUnitTest.ServicesTest
             Assert.ThrowsAsync<NoSuchBookingFoundException>(() => _customerService.AddRatingAsync(customerId, new CarRatingDTO()));
 
         }
+
+
+        [Test]
+        public void AddRatingAsync_BookingNotYetStarted_ThrowsException()
+        {
+            // Arrange
+            var customerId = 1;
+            var carId = 1;
+            var bookingId = 1;
+            var carRatingDTO = new CarRatingDTO { BookingId = bookingId, CarId = carId, Rating = 5, Review = "Excellent service!" };
+
+            var customer = new Customer { Id = customerId, Bookings = new List<Booking>() };
+            var booking = new Booking { Id = bookingId, CustomerId = customerId, CarId = carId, StartDate = DateTime.Now.AddDays(1), Status = "Confirmed" };
+
+            customer.Bookings.Add(booking);
+
+            _mockCustomerRepository.Setup(repo => repo.GetByKey(customerId)).ReturnsAsync(customer);
+
+            // Act & Assert
+            Assert.ThrowsAsync<BookingNotYetStartedException>(() => _customerService.AddRatingAsync(customerId, carRatingDTO));
+        }
+
+        [Test]
+        public void AddRatingAsync_BookingCancelled_ThrowsException()
+        {
+            // Arrange
+            var customerId = 1;
+            var carId = 1;
+            var bookingId = 1;
+            var carRatingDTO = new CarRatingDTO { BookingId = bookingId, CarId = carId, Rating = 5, Review = "Excellent service!" };
+
+            var customer = new Customer { Id = customerId, Bookings = new List<Booking>() };
+            var booking = new Booking { Id = bookingId, CustomerId = customerId, CarId = carId, StartDate = DateTime.Now.AddDays(-1), Status = "Cancelled" };
+
+            customer.Bookings.Add(booking);
+
+            _mockCustomerRepository.Setup(repo => repo.GetByKey(customerId)).ReturnsAsync(customer);
+
+            // Act & Assert
+            Assert.ThrowsAsync<BookingCancelledException>(() => _customerService.AddRatingAsync(customerId, carRatingDTO));
+        }
+
+        [Test]
+        public void AddRatingAsync_CarNotFound_ThrowsException()
+        {
+            // Arrange
+            var customerId = 1;
+            var carId = 1;
+            var bookingId = 1;
+            var carRatingDTO = new CarRatingDTO { BookingId = bookingId, CarId = carId, Rating = 5, Review = "Excellent service!" };
+
+            var customer = new Customer { Id = customerId, Bookings = new List<Booking>() };
+            var booking = new Booking { Id = bookingId, CustomerId = customerId, CarId = carId, StartDate = DateTime.Now.AddDays(-1), Status = "Confirmed" };
+
+            customer.Bookings.Add(booking);
+
+            _mockCustomerRepository.Setup(repo => repo.GetByKey(customerId)).ReturnsAsync(customer);
+            _mockCarRepository.Setup(repo => repo.GetByKey(carId)).ReturnsAsync((Car)null);
+
+            // Act & Assert
+            Assert.ThrowsAsync<NoSuchCarFoundException>(() => _customerService.AddRatingAsync(customerId, carRatingDTO));
+        }
+
+        [Test]
+        public async Task AddRatingAsync_CarRatingsNull_InitializesCollection()
+        {
+            // Arrange
+            var customerId = 1;
+            var carId = 1;
+            var bookingId = 1;
+            var carRatingDTO = new CarRatingDTO { BookingId = bookingId, CarId = carId, Rating = 5, Review = "Excellent service!" };
+
+            var customer = new Customer { Id = customerId, Bookings = new List<Booking>() };
+            var booking = new Booking { Id = bookingId, CustomerId = customerId, CarId = carId, StartDate = DateTime.Now.AddDays(-1), Status = "Confirmed" };
+            var car = new Car { Id = carId, Ratings = null }; // Ratings collection is null
+
+            customer.Bookings.Add(booking);
+
+            _mockCustomerRepository.Setup(repo => repo.GetByKey(customerId)).ReturnsAsync(customer);
+            _mockCarRepository.Setup(repo => repo.GetByKey(carId)).ReturnsAsync(car);
+
+            // Act
+            var result = await _customerService.AddRatingAsync(customerId, carRatingDTO);
+
+            // Assert
+            Assert.IsNotNull(result);
+            Assert.AreEqual(carRatingDTO.CarId, result.CarId);
+            Assert.AreEqual(customerId, result.CustomerId);
+            Assert.AreEqual(carRatingDTO.Rating, result.Rating);
+            Assert.AreEqual(carRatingDTO.Review, result.Review);
+            Assert.IsNotNull(result.CreatedDate);
+
+            // Verify that the rating was added to the car
+            Assert.IsNotNull(car.Ratings);
+            Assert.AreEqual(1, car.Ratings.Count);
+            Assert.AreEqual(carRatingDTO.Rating, car.Ratings.First().Rating);
+
+            // Verify the average rating calculation
+            Assert.AreEqual(carRatingDTO.Rating, car.AverageRating);
+
+            // Verify that the repositories were updated
+            _mockCarRatingRepository.Verify(repo => repo.Add(It.IsAny<CarRating>()), Times.Once);
+            _mockCarRepository.Verify(repo => repo.Update(It.IsAny<Car>()), Times.Once);
+        }
+
     }
 }
