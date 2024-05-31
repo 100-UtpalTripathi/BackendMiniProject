@@ -75,6 +75,9 @@ namespace CarBookingApplication.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<double?>("AverageRating")
+                        .HasColumnType("float");
+
                     b.Property<string>("Category")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
@@ -111,6 +114,38 @@ namespace CarBookingApplication.Migrations
                     b.HasIndex("CityId");
 
                     b.ToTable("Cars");
+                });
+
+            modelBuilder.Entity("CarBookingApplication.Models.CarRating", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CarId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("CreatedDate")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("CustomerId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Rating")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Review")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CarId");
+
+                    b.ToTable("CarRatings");
                 });
 
             modelBuilder.Entity("CarBookingApplication.Models.City", b =>
@@ -282,6 +317,17 @@ namespace CarBookingApplication.Migrations
                     b.Navigation("City");
                 });
 
+            modelBuilder.Entity("CarBookingApplication.Models.CarRating", b =>
+                {
+                    b.HasOne("CarBookingApplication.Models.Car", "Car")
+                        .WithMany("Ratings")
+                        .HasForeignKey("CarId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Car");
+                });
+
             modelBuilder.Entity("CarBookingApplication.Models.Query", b =>
                 {
                     b.HasOne("CarBookingApplication.Models.Customer", "Customer")
@@ -307,6 +353,8 @@ namespace CarBookingApplication.Migrations
             modelBuilder.Entity("CarBookingApplication.Models.Car", b =>
                 {
                     b.Navigation("Bookings");
+
+                    b.Navigation("Ratings");
                 });
 
             modelBuilder.Entity("CarBookingApplication.Models.City", b =>

@@ -41,5 +41,9 @@ namespace CarBookingApplication.Models
         public string Category { get; set; }
 
         public ICollection<Booking>? Bookings { get; set; }
+
+
+        public double? AverageRating { get; set; } // Stores the average rating
+        public ICollection<CarRating>? Ratings { get; set; } // List of ratings
     }
 }

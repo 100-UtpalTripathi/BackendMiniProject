@@ -16,6 +16,8 @@ namespace CarBookingApplication.Contexts
         public DbSet<Booking> Bookings { get; set; }
         public DbSet<Query> Queries { get; set; }
 
+        public DbSet<CarRating> CarRatings { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             // City - Car (One-to-Many)
@@ -23,6 +25,12 @@ namespace CarBookingApplication.Contexts
                 .HasOne(car => car.City)
                 .WithMany(city => city.Cars)
                 .HasForeignKey(car => car.CityId);
+
+            // Car - CarRating (One-to-Many)
+            modelBuilder.Entity<CarRating>()
+                .HasOne(cr => cr.Car)
+                .WithMany(car => car.Ratings)
+                .HasForeignKey(cr => cr.CarId);
 
             // Customer - Booking (One-to-Many)
             modelBuilder.Entity<Booking>()
@@ -57,6 +65,7 @@ namespace CarBookingApplication.Contexts
             modelBuilder.Entity<Customer>()
                 .HasIndex(c => c.Email) // Create index on Email property
                 .IsUnique(); // Ensure uniqueness of Email property
+
 
         }
     }

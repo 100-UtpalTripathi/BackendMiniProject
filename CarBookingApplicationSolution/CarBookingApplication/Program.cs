@@ -89,6 +89,7 @@ namespace CarBookingApplication
             builder.Services.AddScoped<IRepository<int, Car>, CarRepository>();
             builder.Services.AddScoped<IRepository<int, Booking>, BookingRepository>();
             builder.Services.AddScoped<IRepository<int, User>, UserRepository>();
+            builder.Services.AddScoped<IRepository<int, CarRating>, CarRatingRepository>();
 
             #endregion
 
@@ -100,6 +101,7 @@ namespace CarBookingApplication
             builder.Services.AddScoped<ICarService, CarService>();
             builder.Services.AddScoped<IBookingService, BookingService>();
             builder.Services.AddScoped<ICustomerService, CustomerService>();
+
 
             #endregion
 

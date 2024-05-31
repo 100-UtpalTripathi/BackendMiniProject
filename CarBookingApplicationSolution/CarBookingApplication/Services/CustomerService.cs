@@ -9,6 +9,10 @@ using CarBookingApplication.Repositories;
 using CarBookingApplication.Models.DTOs.UserDTOs;
 using CarBookingApplication.Models;
 using CarBookingApplication.Exceptions.Customer;
+using CarBookingApplication.Exceptions.Car;
+using CarBookingApplication.Models.DTOs.CarRatingDTOs;
+using CarBookingApplication.Exceptions.Booking;
+using CarBookingApplication.Exceptions.CarRating;
 
 namespace CarBookingApplication.Services
 {
@@ -18,6 +22,8 @@ namespace CarBookingApplication.Services
 
         private readonly IRepository<int, Customer> _customerRepository;
         private readonly IRepository<int, Booking> _bookingRepository;
+        private readonly IRepository<int, Car> _carRepository;
+        private readonly IRepository<int, CarRating> _carRatingRepository;
 
         #endregion
 
@@ -28,10 +34,12 @@ namespace CarBookingApplication.Services
         /// </summary>
         /// <param name="customerRepository">The customer repository.</param>
         /// <param name="bookingRepository">The booking repository.</param>
-        public CustomerService(IRepository<int, Customer> customerRepository, IRepository<int, Booking> bookingRepository)
+        public CustomerService(IRepository<int, Customer> customerRepository, IRepository<int, Booking> bookingRepository, IRepository<int, Car> carRepository, IRepository<int, CarRating> carRatingRepository)
         {
             _customerRepository = customerRepository;
             _bookingRepository = bookingRepository;
+            _carRepository = carRepository;
+            _carRatingRepository = carRatingRepository;
         }
 
         #endregion
@@ -126,6 +134,82 @@ namespace CarBookingApplication.Services
                 Role = customer.Role
             };
         }
+
+        #endregion
+
+        #region Rate-Car
+
+        /// <summary>
+        /// Adds a rating for a car based on a customer's booking.
+        /// </summary>
+        /// <param name="customerId">The ID of the customer adding the rating.</param>
+        /// <param name="carRatingDTO">The DTO containing the rating information.</param>
+        /// <returns>The newly added CarRating object.</returns>
+
+        public async Task<CarRating> AddRatingAsync(int customerId, CarRatingDTO carRatingDTO)
+        {
+            var customer = await _customerRepository.GetByKey(customerId);
+            if (customer == null)
+            {
+                throw new NoSuchCustomerFoundException("Customer not found!");
+            }
+
+            // Check if the customer has any bookings for the specified bookingId
+            var booking = customer.Bookings?.FirstOrDefault(b => b.Id == carRatingDTO.BookingId);
+
+            // If booking exists and booking contains the car with given car id check
+            if (booking == null || booking.CarId != carRatingDTO.CarId)
+            {
+                throw new NoSuchBookingFoundException($"Customer {customerId} has no booking with ID {carRatingDTO.BookingId} for car {carRatingDTO.CarId}.");
+            }
+
+            if (booking.StartDate > DateTime.UtcNow)
+            {
+                throw new BookingNotYetStartedException("Booking not yet completed.");
+            }
+
+            if (booking.Status == "Cancelled")
+            {
+                throw new BookingCancelledException("Booking has been cancelled. Can't Rate!");
+            }
+
+            var car = await _carRepository.GetByKey(carRatingDTO.CarId);
+            if (car == null)
+            {
+                throw new NoSuchCarFoundException("Car not found!");
+            }
+
+            // Create a new CarRating object
+            var carRating = new CarRating
+            {
+                CarId = carRatingDTO.CarId,
+                CustomerId = customerId,
+                Rating = carRatingDTO.Rating,
+                Review = carRatingDTO.Review,
+                CreatedDate = DateTime.UtcNow
+            };
+
+            // Ensure car.Ratings is initialized
+            if (car.Ratings == null)
+            {
+                car.Ratings = new List<CarRating>();
+            }
+
+            // Add the new CarRating to the collection
+            car.Ratings.Add(carRating);
+
+            // Recalculate the average rating for the car
+            car.AverageRating = car.Ratings.Average(r => r.Rating);
+
+            // Add the new CarRating to the repository
+            await _carRatingRepository.Add(carRating);
+
+            // Update the car entity in the repository
+            await _carRepository.Update(car);
+
+            return carRating;
+        }
+
 
         #endregion
     }

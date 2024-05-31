@@ -42,7 +42,7 @@ namespace CarBookingApplication.Repositories
 
         public async Task<Car> GetByKey(int key)
         {
-            var car = await _context.Cars.FirstOrDefaultAsync(e => e.Id == key);
+            var car = await _context.Cars.Include(c => c.Ratings).FirstOrDefaultAsync(e => e.Id == key);
             return car;
         }
 

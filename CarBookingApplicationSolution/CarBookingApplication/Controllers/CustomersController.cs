@@ -11,6 +11,10 @@ using CarBookingApplication.Exceptions;
 using System.Security.Claims;
 using System.Collections.Generic;
 using System.Threading.Tasks;
+using CarBookingApplication.Exceptions.Booking;
+using CarBookingApplication.Exceptions.Car;
+using CarBookingApplication.Models.DTOs.CarRatingDTOs;
+using CarBookingApplication.Exceptions.CarRating;
 
 namespace CarBookingApplication.Controllers
 {
@@ -149,6 +153,74 @@ namespace CarBookingApplication.Controllers
             {
                 _logger.LogError(ex.Message);
                 return NotFound(new ErrorModel(404, ex.Message));
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(500, new ErrorModel(500, ex.Message));
+            }
+        }
+
+        #endregion
+
+
+        #region Rate-Car
+
+        /// <summary>
+        /// Rate a car based on a customer's booking.
+        /// </summary>
+        /// <param name="carRatingDTO">The DTO containing the rating information.</param>
+        /// <returns>The newly added CarRating object.</returns>
+        [Authorize]
+        [HttpPost("rate-car")]
+        [ProducesResponseType(typeof(CarRating), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<CarRating>> RateCar([FromBody] CarRatingDTO carRatingDTO)
+        {
+            try
+            {
+                var customerId = User.FindFirstValue("eid");
+                if (customerId == null)
+                {
+                    throw new NotLoggedInException("User is not logged in.");
+                }
+
+                var carRating = await _customerService.AddRatingAsync(int.Parse(customerId), carRatingDTO);
+                return Ok(carRating);
+            }
+            catch (NotLoggedInException ex)
+            {
+                _logger.LogError(ex.Message);
+                return Unauthorized(new ErrorModel(401, ex.Message));
+            }
+            catch (NoSuchCustomerFoundException ex)
+            {
+                _logger.LogError(ex.Message);
+                return NotFound(new ErrorModel(404, ex.Message));
+            }
+            catch (NoSuchBookingFoundException ex)
+            {
+                _logger.LogError(ex.Message);
+                return BadRequest(new ErrorModel(400, ex.Message));
+            }
+            catch (NoSuchCarFoundException ex)
+            {
+                _logger.LogError(ex.Message);
+                return NotFound(new ErrorModel(404, ex.Message));
+            }
+            catch(BookingNotYetStartedException ex)
+            {
+                _logger.LogError(ex.Message);
+                return BadRequest(new ErrorModel(400, ex.Message));
+            }
+
+            catch(BookingCancelledException ex)
+            {
+                _logger.LogError(ex.Message);
+                return BadRequest(new ErrorModel(400, ex.Message));
             }
             catch (Exception ex)
             {
