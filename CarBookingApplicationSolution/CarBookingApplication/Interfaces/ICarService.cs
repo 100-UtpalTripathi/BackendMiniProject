@@ -1,4 +1,5 @@
 ﻿using CarBookingApplication.Models.DTOs.CarDTOs;
+using CarBookingApplication.Models;
 namespace CarBookingApplication.Interfaces
 {
     public interface ICarService
@@ -6,6 +7,8 @@ namespace CarBookingApplication.Interfaces
         Task<CarResponseDTO> AddCarAsync(CarDTO carDto);
         Task<CarResponseDTO> EditCarAsync(int id, CarDTO carDto);
         Task<CarResponseDTO> DeleteCarAsync(int id);
-        Task<IEnumerable<CarDTO>> GetAllCarsAsync();
+        Task<IEnumerable<ViewCarsResponseDTO>> GetAllCarsAsync();
+
+    
     }
 }

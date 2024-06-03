@@ -41,7 +41,8 @@ public class CarService : ICarService
             Status = carDto.Status,
             Transmission = carDto.Transmission,
             NumberOfSeats = carDto.NumberOfSeats,
-            Category = carDto.Category
+            Category = carDto.Category,
+            PricePerDay = carDto.PricePerDay
         };
 
         await _carRepository.Add(car);
@@ -74,6 +75,7 @@ public class CarService : ICarService
         car.Transmission = carDto.Transmission;
         car.NumberOfSeats = carDto.NumberOfSeats;
         car.Category = carDto.Category;
+        car.PricePerDay = carDto.PricePerDay;
 
         await _carRepository.Update(car);
         return new CarResponseDTO { Success = true, Message = "Car updated successfully." };
@@ -102,26 +104,31 @@ public class CarService : ICarService
 
     #endregion
 
-    #region Get-All-Cars
+    #region Get-All-Cars 
     /// <summary>
     /// Retrieves all cars asynchronously.
     /// </summary>
     /// <returns>A collection of car DTOs.</returns>
 
-    public async Task<IEnumerable<CarDTO>> GetAllCarsAsync()
+    public async Task<IEnumerable<ViewCarsResponseDTO>> GetAllCarsAsync()
     {
         var cars = await _carRepository.Get();
-        return cars.Select(c => new CarDTO
+
+        return cars.Select(car => new ViewCarsResponseDTO
         {
-            Make = c.Make,
-            Model = c.Model,
-            Year = c.Year,
-            CityId = c.CityId,
-            Status = c.Status,
-            Transmission = c.Transmission,
-            NumberOfSeats = c.NumberOfSeats,
-            Category = c.Category
+            Id = car.Id,
+            Make = car.Make,
+            Model = car.Model,
+            Year = car.Year,
+            CityId = car.CityId,
+            Status = car.Status,
+            Transmission = car.Transmission,
+            NumberOfSeats = car.NumberOfSeats,
+            Category = car.Category,
+            PricePerDay = car.PricePerDay
+
         });
+        
     }
 
     #endregion

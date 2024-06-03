@@ -40,6 +40,9 @@ namespace CarBookingApplication.Models
         [RegularExpression("^(Small|Medium|Large|SUV|Premium)$", ErrorMessage = "Category must be one of the following: 'Small', 'Medium', 'Large', 'SUV', 'Premium'.")]
         public string Category { get; set; }
 
+        [Required(ErrorMessage = "Price per day is required.")]
+        public double PricePerDay { get; set; }
+
         public ICollection<Booking>? Bookings { get; set; }
 
 

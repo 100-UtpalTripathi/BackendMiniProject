@@ -34,6 +34,9 @@
         [Required(ErrorMessage = "Category is required.")]
         [RegularExpression("^(Small|Medium|Large|SUV|Premium)$", ErrorMessage = "Category must be 'Small', 'Medium', 'Large', 'SUV', or 'Premium'.")]
         public string Category { get; set; }
+
+        [Required(ErrorMessage = "Price per day is required.")]
+        public double PricePerDay { get; set; }
     }
 
 }

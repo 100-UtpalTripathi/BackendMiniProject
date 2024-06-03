@@ -393,10 +393,14 @@ namespace CarBookingUnitTest.ServicesTest
             var customerId = 1;
             var customer = new Customer { Id = customerId, Role = "Customer" };
             var bookingId = 1;
-            var booking = new Booking { Id = bookingId, CustomerId = customer.Id, StartDate = DateTime.Now.AddDays(1), Status = "Confirmed" }; // Start date is 1 day from now
+            var carId = 1;
+
+            var car = new Car { Id = carId, Status = "Available", PricePerDay = 2500 };
+            var booking = new Booking { Id = bookingId, CarId = carId, CustomerId = customer.Id, StartDate = DateTime.Now.AddDays(1), Status = "Confirmed" }; // Start date is 1 day from now
 
             _mockBookingRepository.Setup(repo => repo.GetByKey(bookingId)).ReturnsAsync(booking);
             _mockCustomerRepository.Setup(repo => repo.GetByKey(customerId)).ReturnsAsync(customer);
+            _mockCarRepository.Setup(repo => repo.GetByKey(carId)).ReturnsAsync(car);
             // Act
             var result = await _bookingService.CancelBookingAsync(bookingId, customer.Id);
 
@@ -415,10 +419,13 @@ namespace CarBookingUnitTest.ServicesTest
             // Arrange
             var customerId = 1;
             var bookingId = 1;
-            var booking = new Booking { Id = bookingId, CustomerId = customerId, EndDate = DateTime.Now.AddDays(3) }; // Current end date is 3 days from now
+            int carId = 1;
+            var booking = new Booking { Id = bookingId, CarId = carId, CustomerId = customerId, EndDate = DateTime.Now.AddDays(3) }; // Current end date is 3 days from now
+            var car = new Car { Id = carId, Status = "Available", PricePerDay = 2500 };
             var newEndDate = DateTime.Now.AddDays(5); // New end date is 5 days from now
 
             _mockBookingRepository.Setup(repo => repo.GetByKey(bookingId)).ReturnsAsync(booking);
+            _mockCarRepository.Setup(repo => repo.GetByKey(carId)).ReturnsAsync(car);
 
             // Act
             var result = await _bookingService.ExtendBookingAsync(bookingId, newEndDate, customerId);

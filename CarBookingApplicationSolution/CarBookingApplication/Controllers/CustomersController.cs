@@ -1,20 +1,16 @@
 ﻿using CarBookingApplication.Interfaces;
-using CarBookingApplication.Models.DTOs.BookingDTOs;
 using CarBookingApplication.Models.DTOs.UserDTOs;
-using CarBookingApplication.Exceptions.User;
 using CarBookingApplication.Exceptions.Customer;
 using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using CarBookingApplication.Models;
 using CarBookingApplication.Exceptions;
 using System.Security.Claims;
-using System.Collections.Generic;
-using System.Threading.Tasks;
 using CarBookingApplication.Exceptions.Booking;
 using CarBookingApplication.Exceptions.Car;
 using CarBookingApplication.Models.DTOs.CarRatingDTOs;
 using CarBookingApplication.Exceptions.CarRating;
+using CarBookingApplication.Models.DTOs.CarDTOs;
 
 namespace CarBookingApplication.Controllers
 {
@@ -23,13 +19,21 @@ namespace CarBookingApplication.Controllers
     [Route("api/[controller]")]
     public class CustomersController : ControllerBase
     {
+        #region Private Fields
         private readonly ICustomerService _customerService;
+        private readonly ICarService _carService;
         private readonly ILogger<CustomersController> _logger;
-        public CustomersController(ICustomerService customerService, ILogger<CustomersController> logger)
+        #endregion
+
+        #region Constructor
+        public CustomersController(ICustomerService customerService, ILogger<CustomersController> logger, ICarService carService)
         {
             _customerService = customerService;
             _logger = logger;
+            _carService = carService;
         }
+
+        #endregion
 
         #region Customer-Profile
         /// <summary>
@@ -230,5 +234,37 @@ namespace CarBookingApplication.Controllers
         }
 
         #endregion
+
+        #region View-Cars
+
+        [HttpGet("view-cars")]
+        [ProducesResponseType(typeof(IEnumerable<ViewCarsResponseDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status404NotFound)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status401Unauthorized)]
+        [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
+        public async Task<ActionResult<IEnumerable<ViewCarsResponseDTO>>> ViewCars()
+        {
+            try
+            {
+                var cars = await _carService.GetAllCarsAsync();
+                
+
+                if (!cars.Any())
+                {
+                    return NotFound(new ErrorModel(404, "No cars found."));
+                }
+                cars = cars.Where(car => car.Status == "Available").ToList();
+
+                return Ok(cars);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                return StatusCode(500, new ErrorModel(500, ex.Message));
+            }
+        }
+        #endregion
+
+
     }
 }

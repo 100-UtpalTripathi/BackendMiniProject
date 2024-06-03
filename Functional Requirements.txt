@@ -49,9 +49,12 @@ Functional Requirements:
 
 	g. Manage Profile:
 	Customers can edit their profile details such as email, phone number, and address.
+	
+	h. Rate and review a Car
+	Customers can rate a car based on their booking experience.
 
 
-3. Driver Module:
+3. Driver Module:  
 	a. Cancel and View Bookings
 
  

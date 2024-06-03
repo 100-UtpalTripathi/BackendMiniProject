@@ -202,20 +202,25 @@ namespace CarBookingApplication.Services
                 }
                 else
                 {
-                    decimal cancellationFee = CalculateCancellationFee(timeDifference);
-
-                    // Update the booking with the cancellation fee and status
-                    booking.Status = "Cancelled";
-                    booking.FinalAmount -= cancellationFee; // Deduct the cancellation fee from the final amount
-                    await _bookingRepository.Update(booking);
-
-                    // Get the corresponding car and update its status to "Available"
                     var car = await _carRepository.GetByKey(booking.CarId);
                     if (car != null)
                     {
                         car.Status = "Available";
                         await _carRepository.Update(car);
                     }
+
+                    decimal cancellationFee = CalculateCancellationFee(timeDifference, car);
+
+                    // Update the booking with the cancellation fee and status
+                    booking.Status = "Cancelled";
+                    booking.FinalAmount -= cancellationFee; // Deduct the cancellation fee from the final amount
+
+                    booking.FinalAmount = booking.FinalAmount < 0 ? 0 : booking.FinalAmount; // Final amount cannot be negative
+
+                    await _bookingRepository.Update(booking);
+
+                    // Get the corresponding car and update its status to "Available"
+                    
 
                     return new BookingResponseDTO
                     {
@@ -305,7 +310,7 @@ namespace CarBookingApplication.Services
         [ExcludeFromCodeCoverage]
         private decimal CalculateTotalAmount(Car car, DateTime startDate, DateTime endDate)
         {
-            decimal dailyRate = 1000; 
+            decimal dailyRate = (decimal)car.PricePerDay;
             int totalDays = (endDate - startDate).Days;
             return dailyRate * totalDays;
         }
@@ -354,7 +359,7 @@ namespace CarBookingApplication.Services
         /// <returns>The cancellation fee.</returns>
 
         [ExcludeFromCodeCoverage]
-        private decimal CalculateCancellationFee(TimeSpan timeDifference)
+        private decimal CalculateCancellationFee(TimeSpan timeDifference, Car car)
         {
             // Calculate the remaining hours until the booking start date
             double remainingHours = 48 - timeDifference.TotalHours;
@@ -366,7 +371,8 @@ namespace CarBookingApplication.Services
             }
             else
             {
-                decimal cancellationFee = (decimal)remainingHours * 40; // Assuming $40 per hour
+                decimal rate  = ((decimal)car.PricePerDay / 24) * 1.5m; // 1.5 times the hourly rate
+                decimal cancellationFee = (decimal)remainingHours * rate; // Assuming $40 per hour
                 return cancellationFee;
             }
         }
@@ -409,7 +415,7 @@ namespace CarBookingApplication.Services
                 }
 
                 // Calculate the additional amount for the extended period
-                decimal additionalAmount = CalculateAdditionalAmount(booking, newEndDate);
+                decimal additionalAmount = await CalculateAdditionalAmount(booking, newEndDate);
 
                 // Update booking details
                 booking.EndDate = newEndDate;
@@ -459,15 +465,15 @@ namespace CarBookingApplication.Services
         /// <returns>The additional amount.</returns>
 
         [ExcludeFromCodeCoverage]
-        private decimal CalculateAdditionalAmount(Booking booking, DateTime newEndDate)
+        private async Task<decimal> CalculateAdditionalAmount(Booking booking, DateTime newEndDate)
         {
             // Calculate the difference in days between the current end date and the new end date
             int additionalDays = (int)(newEndDate - booking.EndDate).TotalDays;
 
-           
-            decimal dailyRate = 1000; // Example rate
+            var car = await _carRepository.GetByKey(booking.CarId);
 
-            // Calculate additional amount based on the daily rate and additional days
+
+            decimal dailyRate = (decimal)car.PricePerDay;
             decimal additionalAmount = dailyRate * additionalDays;
 
             return additionalAmount;

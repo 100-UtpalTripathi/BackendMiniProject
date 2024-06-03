@@ -147,9 +147,9 @@ namespace CarBookingApplication.Controllers
         /// </summary>
         /// <returns>List of cars</returns>
         [HttpGet("all")]
-        [ProducesResponseType(typeof(IEnumerable<CarDTO>), StatusCodes.Status200OK)]
+        [ProducesResponseType(typeof(IEnumerable<ViewCarsResponseDTO>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
-        public async Task<ActionResult<IEnumerable<CarDTO>>> GetAllCars()
+        public async Task<ActionResult<IEnumerable<ViewCarsResponseDTO>>> GetAllCars()
         {
             try
             {
