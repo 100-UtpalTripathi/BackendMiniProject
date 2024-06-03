@@ -226,6 +226,11 @@ namespace CarBookingApplication.Controllers
                 _logger.LogError(ex.Message);
                 return BadRequest(new ErrorModel(400, ex.Message));
             }
+            catch(CarRatingAlreadyExistsException ex)
+            {
+                _logger.LogError(ex.Message);
+                return BadRequest(new ErrorModel(400, ex.Message));
+            }
             catch (Exception ex)
             {
                 _logger.LogError(ex.Message);

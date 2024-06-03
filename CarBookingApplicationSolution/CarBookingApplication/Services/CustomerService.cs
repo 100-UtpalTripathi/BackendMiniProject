@@ -179,15 +179,25 @@ namespace CarBookingApplication.Services
                 throw new NoSuchCarFoundException("Car not found!");
             }
 
+            // Check if the customer has already rated the car
+            if (car.Ratings != null && car.Ratings.Any(r => r.CustomerId == customerId && r.BookingId == carRatingDTO.BookingId))
+            {
+                throw new CarRatingAlreadyExistsException("Car already rated by the customer.");
+            }
+
             // Create a new CarRating object
             var carRating = new CarRating
             {
                 CarId = carRatingDTO.CarId,
                 CustomerId = customerId,
+                BookingId = carRatingDTO.BookingId,
                 Rating = carRatingDTO.Rating,
                 Review = carRatingDTO.Review,
                 CreatedDate = DateTime.UtcNow
             };
+
+            // Add the new CarRating to the repository
+            var AddedRating = await _carRatingRepository.Add(carRating);
 
             // Ensure car.Ratings is initialized
             if (car.Ratings == null)
@@ -196,13 +206,10 @@ namespace CarBookingApplication.Services
             }
 
             // Add the new CarRating to the collection
-            car.Ratings.Add(carRating);
+            car.Ratings.Add(AddedRating);
 
             // Recalculate the average rating for the car
             car.AverageRating = car.Ratings.Average(r => r.Rating);
-
-            // Add the new CarRating to the repository
-            await _carRatingRepository.Add(carRating);
 
             // Update the car entity in the repository
             await _carRepository.Update(car);

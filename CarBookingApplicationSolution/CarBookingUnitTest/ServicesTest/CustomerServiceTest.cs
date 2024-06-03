@@ -180,6 +180,7 @@ namespace CarBookingUnitTest.ServicesTest
             _mockCustomerRepository.Setup(repo => repo.GetByKey(customerId)).ReturnsAsync(customer);
             _mockBookingRepository.Setup(repo => repo.GetByKey(bookingId)).ReturnsAsync(booking);
             _mockCarRepository.Setup(repo => repo.GetByKey(carId)).ReturnsAsync(car);
+            _mockCarRatingRepository.Setup(repo => repo.Add(It.IsAny<CarRating>())).ReturnsAsync(new CarRating { CarId = carId, CustomerId = customerId, Rating = 5, Review = "Excellent service!" });
 
             // Act
             var result = await _customerService.AddRatingAsync(customerId, carRatingDTO);
@@ -315,6 +316,7 @@ namespace CarBookingUnitTest.ServicesTest
 
             _mockCustomerRepository.Setup(repo => repo.GetByKey(customerId)).ReturnsAsync(customer);
             _mockCarRepository.Setup(repo => repo.GetByKey(carId)).ReturnsAsync(car);
+            _mockCarRatingRepository.Setup(repo => repo.Add(It.IsAny<CarRating>())).ReturnsAsync(new CarRating { CarId = carId, CustomerId = customerId, Rating = 5, Review = "Excellent service!" });
 
             // Act
             var result = await _customerService.AddRatingAsync(customerId, carRatingDTO);

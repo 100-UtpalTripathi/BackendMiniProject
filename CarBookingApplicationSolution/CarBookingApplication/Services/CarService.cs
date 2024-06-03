@@ -125,8 +125,8 @@ public class CarService : ICarService
             Transmission = car.Transmission,
             NumberOfSeats = car.NumberOfSeats,
             Category = car.Category,
-            PricePerDay = car.PricePerDay
-
+            PricePerDay = car.PricePerDay,
+            AverageRating = car.AverageRating ?? 5,
         });
         
     }
