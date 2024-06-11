@@ -5,25 +5,22 @@ Functional Requirements:
 	a. Login / Logout:
 	Implement authentication using JWT.
 
-	b. Add a new User (Admin):
-	Only the main admin can add new admin users; other admins cannot sign up independently.
-
-	c. Manage Cities:
+	b. Manage Cities:
 	Admins can add, edit, and delete city records.
 
-	d. Add a new Car:
+	c. Add a new Car:
 	Admins can register new Cars
 
-	e. Edit/Delete Existing Car:
+	d. Edit/Delete Existing Car:
 	Admins can update car details or remove cars from the database.
 
-	f. Contact Us Queries:
+	e. Contact Us Queries:
 	Admins can view, respond to, and close customer queries.
 
-	g. View and Manage Bookings:
+	f. View and Manage Bookings:
 	Admins can view all bookings, cancel bookings if necessary, and handle booking-related issues.
 
-	h. View and Manage Customers:
+	g. View and Manage Customers:
 	Admin can manage customers.
 
 
@@ -52,10 +49,6 @@ Functional Requirements:
 	
 	h. Rate and review a Car
 	Customers can rate a car based on their booking experience.
-
-
-3. Driver Module:  
-	a. Cancel and View Bookings
 
  
 Logics related to discounts : 

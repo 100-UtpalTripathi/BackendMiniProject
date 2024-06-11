@@ -186,7 +186,7 @@ namespace CarBookingApplication.Services
             }
 
             // Create a new CarRating object
-            var carRating = new CarRating
+            var CarRating = new CarRating
             {
                 CarId = carRatingDTO.CarId,
                 CustomerId = customerId,
