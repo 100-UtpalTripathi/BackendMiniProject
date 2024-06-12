@@ -1,0 +1,22 @@
+body {
+    background-color: #121212;
+    color: #f8f9fa;
+    font-family: Arial, sans-serif;
+  }
+  .sidebar {
+    background-color: #1f1f1f;
+    height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
+  .content {
+    padding: 20px;
+  }
+  .nav-link {
+    cursor: pointer;
+    color: #ffffff;
+  }
+  .nav-link:hover {
+    color: #0d6efd;
+  }
