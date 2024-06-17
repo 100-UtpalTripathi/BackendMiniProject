@@ -16,6 +16,7 @@ body {
   }
   .nav-link:hover {
     color: #e63946 !important;
+    cursor: pointer;
   }
   .iframe-container {
     width: 100%;

@@ -1,22 +1,92 @@
+/* manage_cities.css */
 body {
-    background-color: #121212;
-    color: #f8f9fa;
-    font-family: Arial, sans-serif;
-  }
-  .sidebar {
-    background-color: #1f1f1f;
-    height: 100vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
-  .content {
-    padding: 20px;
-  }
-  .nav-link {
-    cursor: pointer;
-    color: #ffffff;
-  }
-  .nav-link:hover {
-    color: #0d6efd;
-  }
+  background-color: #121212;
+  color: #f8f9fa;
+  font-family: Arial, sans-serif;
+  overflow: hidden; /* Prevent body scrolling */
+}
+
+.sidebar {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  width: 200px;
+  background-color: #1f1f1f;
+  padding: 1rem;
+  overflow-y: auto;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+}
+
+.nav-link {
+  cursor: pointer;
+  color: #ffffff;
+  margin: 10px 0;
+}
+.nav-link:hover {
+  color: #0d6efd;
+}
+
+.content {
+  margin-left: 220px; /* Make space for the fixed sidebar */
+  padding: 1rem;
+  height: 100vh;
+  overflow-y: auto;
+}
+
+.table-container {
+  max-height: 80vh; /* Adjust this as needed */
+  overflow-y: auto;
+}
+
+.modal-content {
+  background-color: #2a2a2a;
+  color: #f8f9fa;
+}
+
+.modal-header {
+  border-bottom: 1px solid #444;
+}
+
+.modal-footer {
+  border-top: 1px solid #444;
+}
+
+.form-control {
+  background-color: #121212;
+  color: #f8f9fa;
+  border: 1px solid #444;
+}
+
+.form-control:focus {
+  border-color: #0d6efd;
+  box-shadow: none;
+}
+
+.btn-primary {
+  background-color: #0d6efd;
+  border-color: #0d6efd;
+}
+
+.btn-danger {
+  background-color: #dc3545;
+  border-color: #dc3545;
+}
+
+.table-dark {
+  background-color: #2a2a2a;
+}
+
+.table-dark th,
+.table-dark td {
+  border-color: #444;
+}
+
+.table-dark thead th {
+  background-color: #1f1f1f;
+  border-color: #444;
+}
