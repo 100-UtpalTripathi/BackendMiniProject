@@ -43,6 +43,8 @@ namespace CarBookingApplication.Models
         [Required(ErrorMessage = "Price per day is required.")]
         public double PricePerDay { get; set; }
 
+
+
         public ICollection<Booking>? Bookings { get; set; }
 
 

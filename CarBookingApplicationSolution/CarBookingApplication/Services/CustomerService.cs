@@ -197,7 +197,7 @@ namespace CarBookingApplication.Services
             };
 
             // Add the new CarRating to the repository
-            var AddedRating = await _carRatingRepository.Add(carRating);
+            var AddedRating = await _carRatingRepository.Add(CarRating);
 
             // Ensure car.Ratings is initialized
             if (car.Ratings == null)
@@ -214,7 +214,7 @@ namespace CarBookingApplication.Services
             // Update the car entity in the repository
             await _carRepository.Update(car);
 
-            return carRating;
+            return CarRating;
         }
 
 

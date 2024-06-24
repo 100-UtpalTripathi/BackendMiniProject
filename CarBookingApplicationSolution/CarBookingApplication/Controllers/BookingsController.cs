@@ -10,11 +10,13 @@ using CarBookingApplication.Models.DTOs.QueryDTOs;
 using System.Security.Claims;
 using CarBookingApplication.Exceptions.Customer;
 using CarBookingApplication.Exceptions.Car;
+using Microsoft.AspNetCore.Cors;
 
 namespace CarBookingApplication.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [EnableCors("MyCors")]
     public class BookingsController : ControllerBase
     {
         private readonly IBookingService _bookingService;

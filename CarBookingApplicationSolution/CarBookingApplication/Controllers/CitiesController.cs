@@ -7,12 +7,14 @@ using CarBookingApplication.Exceptions;
 using System;
 using CarBookingApplication.Models;
 using CarBookingApplication.Exceptions.City;
+using Microsoft.AspNetCore.Cors;
 
 namespace CarBookingApplication.Controllers
 {
     [Authorize(Roles = "Admin")]
     [ApiController]
     [Route("api/[controller]")]
+    [EnableCors("MyCors")]
     public class CitiesController : ControllerBase
     {
         private readonly ICityService _cityService;

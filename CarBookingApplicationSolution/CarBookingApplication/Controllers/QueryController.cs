@@ -8,12 +8,14 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Security.Claims;
 using CarBookingApplication.Exceptions.Query;
+using Microsoft.AspNetCore.Cors;
 
 namespace CarBookingApplication.Controllers
 {
     
     [ApiController]
     [Route("api/[controller]")]
+    [EnableCors("MyCors")]
     public class QueriesController : ControllerBase
     {
         private readonly IQueryService _queryService;

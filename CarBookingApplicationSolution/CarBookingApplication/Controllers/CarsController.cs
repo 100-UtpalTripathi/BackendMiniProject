@@ -8,12 +8,14 @@ using System;
 using CarBookingApplication.Models;
 using CarBookingApplication.Exceptions.Car;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Cors;
 
 
 namespace CarBookingApplication.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
+    [EnableCors("MyCors")]
     public class CarsController : ControllerBase
     {
         private readonly ICarService _carService;

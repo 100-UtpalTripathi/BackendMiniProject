@@ -45,6 +45,7 @@ public class TokenService : ITokenService
         var claims = new List<Claim>()
         {
             new Claim("eid", customer.Id.ToString()),
+            new Claim("role", customer.Role),
             new Claim(ClaimTypes.Role, customer.Role)
         };
 

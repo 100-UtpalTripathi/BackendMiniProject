@@ -2,6 +2,7 @@
 using CarBookingApplication.Models;
 using CarBookingApplication.Models.DTOs.UserDTOs;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 
@@ -9,6 +10,8 @@ namespace EmployeeRequestTrackerAPI.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+
+    [EnableCors("MyCors")]
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;

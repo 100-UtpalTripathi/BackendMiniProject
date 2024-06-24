@@ -11,12 +11,14 @@ using CarBookingApplication.Exceptions.Car;
 using CarBookingApplication.Models.DTOs.CarRatingDTOs;
 using CarBookingApplication.Exceptions.CarRating;
 using CarBookingApplication.Models.DTOs.CarDTOs;
+using Microsoft.AspNetCore.Cors;
 
 namespace CarBookingApplication.Controllers
 {
     [Authorize]
     [ApiController]
     [Route("api/[controller]")]
+    [EnableCors("MyCors")]
     public class CustomersController : ControllerBase
     {
         #region Private Fields
