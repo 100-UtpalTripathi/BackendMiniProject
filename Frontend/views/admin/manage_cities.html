@@ -3,71 +3,31 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Manage Cities</title>
     <link
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
       rel="stylesheet"
     />
-    <title>Manage Cities</title>
-    <link rel="stylesheet" href="../../assets/admin/css/manage-cities.css" />
+    <!-- Include your custom CSS if needed -->
+    <link rel="stylesheet" href="../../assets/admin/css/manage_cities.css" />
   </head>
   <body>
-    <div class="sidebar">
-      <ul class="nav flex-column text-center">
-        <li class="nav-item mb-2">
-          <a
-            class="nav-link"
-            data-bs-toggle="modal"
-            data-bs-target="#addCityModal"
-            >Add City</a
-          >
-        </li>
-        <li class="nav-item mb-2">
-          <a
-            class="nav-link"
-            data-bs-toggle="modal"
-            data-bs-target="#editCityModal"
-            >Edit City</a
-          >
-        </li>
-        <li class="nav-item mb-2">
-          <a
-            class="nav-link"
-            data-bs-toggle="modal"
-            data-bs-target="#deleteCityModal"
-            >Delete City</a
-          >
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" id="showCitiesLink" href="#">Show All Cities</a>
-        </li>
-      </ul>
-    </div>
-
-    <div class="content">
+    <div class="container mt-5">
       <h1>Manage Cities</h1>
-      <p>Select an option from the left to manage cities.</p>
-
-      <!-- Show All Cities Content -->
-      <div id="showCitiesContent" class="table-container d-none">
-        <h2>All Cities</h2>
-        <table class="table table-dark table-striped">
-          <thead>
-            <tr>
-              <th scope="col">#</th>
-              <th scope="col">Name</th>
-              <th scope="col">State</th>
-              <th scope="col">Country</th>
-              <th scope="col">Pincode</th>
-            </tr>
-          </thead>
-          <tbody id="cityTableBody">
-            <!-- City rows will be populated here -->
-          </tbody>
-        </table>
-      </div>
+      <button
+        class="btn btn-primary mt-4"
+        style="margin-bottom: 40px"
+        data-bs-toggle="modal"
+        data-bs-target="#addCityModal"
+      >
+        Add City
+      </button>
+      <div
+        id="citiesContainer"
+        class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4"
+      ></div>
     </div>
 
-    <!-- Modals -->
     <!-- Add City Modal -->
     <div
       class="modal fade"
@@ -90,19 +50,14 @@
           <div class="modal-body">
             <form id="addCityForm">
               <div class="mb-3">
-                <label for="cityName" class="form-label">Name</label>
+                <label for="name" class="form-label">City Name</label>
                 <input
                   type="text"
                   class="form-control"
-                  id="cityName"
+                  id="name"
                   name="name"
-                  placeholder="Enter city name"
                   required
-                  maxlength="100"
                 />
-                <div class="invalid-feedback">
-                  Name is required and cannot be longer than 100 characters.
-                </div>
               </div>
               <div class="mb-3">
                 <label for="state" class="form-label">State</label>
@@ -111,13 +66,8 @@
                   class="form-control"
                   id="state"
                   name="state"
-                  placeholder="Enter state"
                   required
-                  maxlength="100"
                 />
-                <div class="invalid-feedback">
-                  State is required and cannot be longer than 100 characters.
-                </div>
               </div>
               <div class="mb-3">
                 <label for="country" class="form-label">Country</label>
@@ -126,13 +76,8 @@
                   class="form-control"
                   id="country"
                   name="country"
-                  placeholder="Enter country"
                   required
-                  maxlength="100"
                 />
-                <div class="invalid-feedback">
-                  Country is required and cannot be longer than 100 characters.
-                </div>
               </div>
               <div class="mb-3">
                 <label for="pincode" class="form-label">Pincode</label>
@@ -141,13 +86,8 @@
                   class="form-control"
                   id="pincode"
                   name="pincode"
-                  placeholder="Enter pincode"
                   required
-                  maxlength="6"
                 />
-                <div class="invalid-feedback">
-                  Pincode is required and cannot be longer than 6 characters.
-                </div>
               </div>
               <button type="submit" class="btn btn-primary">Add City</button>
             </form>
@@ -177,32 +117,16 @@
           </div>
           <div class="modal-body">
             <form id="editCityForm">
+              <input type="hidden" id="editCityId" name="cityId" />
               <div class="mb-3">
-                <label for="editCityId" class="form-label">City Id</label>
-                <input
-                  type="number"
-                  class="form-control"
-                  id="editCityId"
-                  name="id"
-                  placeholder="Enter city Id"
-                  required
-                />
-                <div class="invalid-feedback">City Id is invalid!</div>
-              </div>
-              <div class="mb-3">
-                <label for="editCityName" class="form-label">Name</label>
+                <label for="editName" class="form-label">City Name</label>
                 <input
                   type="text"
                   class="form-control"
-                  id="editCityName"
+                  id="editName"
                   name="name"
-                  placeholder="Enter city name"
                   required
-                  maxlength="100"
                 />
-                <div class="invalid-feedback">
-                  Name is required and cannot be longer than 100 characters.
-                </div>
               </div>
               <div class="mb-3">
                 <label for="editState" class="form-label">State</label>
@@ -211,13 +135,8 @@
                   class="form-control"
                   id="editState"
                   name="state"
-                  placeholder="Enter state"
                   required
-                  maxlength="100"
                 />
-                <div class="invalid-feedback">
-                  State is required and cannot be longer than 100 characters.
-                </div>
               </div>
               <div class="mb-3">
                 <label for="editCountry" class="form-label">Country</label>
@@ -226,13 +145,8 @@
                   class="form-control"
                   id="editCountry"
                   name="country"
-                  placeholder="Enter country"
                   required
-                  maxlength="100"
                 />
-                <div class="invalid-feedback">
-                  Country is required and cannot be longer than 100 characters.
-                </div>
               </div>
               <div class="mb-3">
                 <label for="editPincode" class="form-label">Pincode</label>
@@ -241,65 +155,20 @@
                   class="form-control"
                   id="editPincode"
                   name="pincode"
-                  placeholder="Enter pincode"
                   required
-                  maxlength="6"
                 />
-                <div class="invalid-feedback">
-                  Pincode is required and cannot be longer than 6 characters.
-                </div>
               </div>
-              <button type="submit" class="btn btn-primary">Edit City</button>
+              <button type="submit" class="btn btn-primary">Update City</button>
             </form>
           </div>
         </div>
       </div>
     </div>
 
-    <!-- Delete City Modal -->
-    <div
-      class="modal fade"
-      id="deleteCityModal"
-      tabindex="-1"
-      aria-labelledby="deleteCityModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="deleteCityModalLabel">Delete City</h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Close"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <form id="deleteCityForm">
-              <div class="mb-3">
-                <label for="deleteCityId" class="form-label">City ID</label>
-                <input
-                  type="number"
-                  class="form-control"
-                  id="deleteCityId"
-                  name="id"
-                  placeholder="Enter city ID"
-                  required
-                  min="1"
-                />
-                <div class="invalid-feedback">
-                  City ID is required and must be a positive number.
-                </div>
-              </div>
-              <button type="submit" class="btn btn-danger">Delete City</button>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <!-- Bootstrap JS Bundle with Popper -->
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.6/dist/umd/popper.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.min.js"></script>
+    <!-- Your custom JavaScript file -->
     <script src="../../assets/admin/js/manage_cities.js"></script>
   </body>
 </html>

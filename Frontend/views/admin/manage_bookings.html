@@ -1,109 +1,35 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
     <title>Manage Bookings</title>
-    <link rel="stylesheet" href="../../assets/admin/css/manage-bookings.css">
-    
+    <link rel="stylesheet" href="../../assets/admin/css/manage_bookings.css" />
   </head>
   <body>
-    <div class="container-fluid">
-      <div class="row">
-        <div class="col-md-3 sidebar">
-          <ul class="nav flex-column text-center">
-            <li class="nav-item mb-2"><a class="nav-link" data-bs-toggle="modal" data-bs-target="#getAllBookingsModal">Get All Bookings</a></li>
-            <li class="nav-item mb-2"><a class="nav-link" data-bs-toggle="modal" data-bs-target="#getBookingByIdModal">Get Booking by ID</a></li>
-            <li class="nav-item"><a class="nav-link" data-bs-toggle="modal" data-bs-target="#cancelBookingModal">Cancel Booking</a></li>
-          </ul>
-        </div>
-        <div class="col-md-9 content" id="contentArea">
-          <h1>Manage Bookings</h1>
-          <p>Select an option from the left to manage bookings.</p>
-        </div>
-      </div>
+    <div class="container">
+      <h1>Manage Bookings</h1>
+      <div id="booking-cards-container" class="cards-container"></div>
     </div>
 
-    <!-- Modals -->
-    <!-- Get All Bookings Modal -->
-    <div class="modal fade" id="getAllBookingsModal" tabindex="-1" aria-labelledby="getAllBookingsModalLabel" aria-hidden="true">
-      <div class="modal-dialog modal-lg">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="getAllBookingsModalLabel">All Bookings</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <table class="table table-dark table-striped">
-              <thead>
-                <tr>
-                  <th scope="col">#</th>
-                  <th scope="col">Booking</th>
-                  <th scope="col">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <th scope="row">1</th>
-                  <td>Booking 1</td>
-                  <td>Confirmed</td>
-                </tr>
-                <tr>
-                  <th scope="row">2</th>
-                  <td>Booking 2</td>
-                  <td>Cancelled</td>
-                </tr>
-                <!-- More rows as needed -->
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Get Booking by ID Modal -->
-    <div class="modal fade" id="getBookingByIdModal" tabindex="-1" aria-labelledby="getBookingByIdModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="getBookingByIdModalLabel">Get Booking by ID</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <form>
-              <div class="mb-3">
-                <label for="bookingId" class="form-label">Booking ID</label>
-                <input type="text" class="form-control" id="bookingId" placeholder="Enter booking ID">
-              </div>
-              <button type="submit" class="btn btn-primary">Get Booking</button>
-            </form>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Cancel Booking Modal -->
-    <div class="modal fade" id="cancelBookingModal" tabindex="-1" aria-labelledby="cancelBookingModalLabel" aria-hidden="true">
-      <div class="modal-dialog">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="cancelBookingModalLabel">Cancel Booking</h5>
-            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-          </div>
-          <div class="modal-body">
-            <form>
-              <div class="mb-3">
-                <label for="cancelBookingId" class="form-label">Booking ID</label>
-                <input type="text" class="form-control" id="cancelBookingId" placeholder="Enter booking ID">
-              </div>
-              <button type="submit" class="btn btn-danger">Cancel Booking</button>
-            </form>
-          </div>
-        </div>
+    <!-- Delete Booking Modal -->
+    <div id="delete-modal" class="modal">
+      <div class="modal-content">
+        <span class="close" onclick="closeDeleteModal()">&times;</span>
+        <h2>Confirm Cancel</h2>
+        <p>Are you sure you want to cancel this booking?</p>
+        <button class="btn btn-danger" onclick="confirmCancel()">Cancel</button>
+        <button class="btn btn-secondary" onclick="closeDeleteModal()">
+          Close
+        </button>
       </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../../assets/admin/js/manage_bookings.js"></script>
   </body>
 </html>
