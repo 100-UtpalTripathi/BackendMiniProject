@@ -15,10 +15,11 @@ using Microsoft.AspNetCore.Cors;
 
 namespace CarBookingApplication.Controllers
 {
-    [Authorize]
+    
     [ApiController]
     [Route("api/[controller]")]
     [EnableCors("MyCors")]
+    [Authorize]
     public class CustomersController : ControllerBase
     {
         #region Private Fields

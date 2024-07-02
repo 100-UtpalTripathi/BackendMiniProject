@@ -34,8 +34,11 @@ namespace CarBookingApplication.Repositories
 
         public Task<Customer> GetByKey(int key)
         {
-            var Customer = _context.Customers.Include(c => c.Bookings).FirstOrDefaultAsync(e => e.Id == key);
-            return Customer;
+            var customer = _context.Customers
+                           .Include(c => c.Bookings)
+                           .ThenInclude(b => b.Car)
+                           .FirstOrDefaultAsync(e => e.Id == key);
+            return customer;
         }
 
         public async Task<IEnumerable<Customer>> Get()

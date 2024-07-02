@@ -36,14 +36,16 @@ namespace CarBookingApplication.Repositories
         }
 
         public async Task<IEnumerable<Booking>> Get()
-        {  
-            return await _context.Bookings.ToListAsync();
-            
+        {
+            return await _context.Bookings
+                         .Include(b => b.Car)
+                         .ToListAsync();
+
         }
 
         public async Task<Booking> GetByKey(int key)
         {
-            var booking = await _context.Bookings.FirstOrDefaultAsync(e => e.Id == key);
+            var booking = await _context.Bookings.Include(b => b.Car).FirstOrDefaultAsync(e => e.Id == key);
             return booking;
         }
 
