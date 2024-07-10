@@ -1,0 +1,36 @@
+body {
+    background-color: #121212;
+    color: #ffffff;
+    padding: 0px;
+    margin: 0px;
+    box-sizing: border-box;
+}
+
+.card {
+    background-color: #1f1f1f;
+    color: #ffffff;
+    border: none;
+}
+
+.card .card-body {
+    border: 1px solid #2f2f2f;
+}
+
+.modal-content {
+    background-color: #1f1f1f;
+    color: #ffffff;
+}
+
+.modal-header, .modal-footer {
+    border-color: #2f2f2f;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    border-color: #007bff;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    border-color: #0056b3;
+}

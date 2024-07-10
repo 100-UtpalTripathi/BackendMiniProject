@@ -75,10 +75,24 @@ public class QueryService : IQueryService
     /// </summary>
     /// <returns>A collection of open queries.</returns>
 
-    public async Task<IEnumerable<Query>> GetAllQueriesAsync()
+    public async Task<IEnumerable<Query>> GetAllQueriesAsync(int customerId)
     {
-        var queries = await _queryRepository.Get();
-        return queries.Where(q => q.Status == "Open");
+        var customer = await _customerRepository.GetByKey(customerId);
+        if (customer == null)
+        {
+            throw new NoSuchCustomerFoundException("Customer not found.");
+        }
+        if (customer.Role == "Admin")
+        {
+            var queries = await _queryRepository.Get();
+            return queries.Where(q => q.Status == "Open");
+        }
+        else
+        {
+            var queries = await _queryRepository.Get();
+            return queries.Where(q => q.CustomerId == customerId);
+        }
+
     }
 
     #endregion

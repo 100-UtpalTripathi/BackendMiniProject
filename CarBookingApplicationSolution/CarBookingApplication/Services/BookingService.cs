@@ -55,12 +55,10 @@ namespace CarBookingApplication.Services
                 {
                     throw new NoSuchCustomerFoundException("Customer not found.");
                 }
-
-                if (customer.Role == "Admin")
+                else if(customer.Role == "Admin")
                 {
-                    // Retrieving all bookings if the customer is an admin
-                    var allBookings = await _bookingRepository.Get();
-                    return allBookings;
+                    // Retrieve all bookings for the admin
+                    return await _bookingRepository.Get();
                 }
                 else
                 {

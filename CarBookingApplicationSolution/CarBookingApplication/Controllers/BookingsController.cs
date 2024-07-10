@@ -31,10 +31,10 @@ namespace CarBookingApplication.Controllers
 
         #region Get all bookings
         /// <summary>
-        /// Get all bookings (Admin only)
+        /// Get all bookings
         /// </summary>
         /// <returns>List of bookings</returns>
-        [Authorize(Roles = "Admin")]
+        [Authorize]
         [HttpGet]
         [ProducesResponseType(typeof(IList<Booking>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status401Unauthorized)]
@@ -226,7 +226,7 @@ namespace CarBookingApplication.Controllers
 
         #region Extend Bookings
 
-        [HttpPost("{Id}/extend")]
+        [HttpPut("{Id}/extend")]
         [ProducesResponseType(typeof(BookingResponseDTO), 200)]
         [ProducesResponseType(typeof(BookingResponseDTO), 400)]
         [ProducesResponseType(typeof(BookingResponseDTO), 404)]

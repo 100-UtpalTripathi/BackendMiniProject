@@ -14,9 +14,16 @@ function fetchBookings() {
         const container = document.getElementById('booking-cards-container');
         container.innerHTML = '';
 
+        if (bookings.message === "No Bookings Found!") {
+            const noBookingsMessage = document.createElement('p');
+            noBookingsMessage.textContent = "No bookings found!";
+            container.appendChild(noBookingsMessage);
+            return;
+        }
+
         bookings.forEach(booking => {
             const card = document.createElement('div');
-            card.classList.add('card');
+            card.classList.add('card', 'mb-3', 'p-3', 'bg-dark', 'text-white');
             card.innerHTML = `
                 <p><strong>Booking ID:</strong> ${booking.id}</p>
                 <p><strong>Customer ID:</strong> ${booking.customerId}</p>
@@ -32,6 +39,7 @@ function fetchBookings() {
     })
     .catch(error => console.error('Error fetching bookings:', error));
 }
+
 
 function openCancelModal(bookingId) {
     document.getElementById('delete-modal').style.display = 'flex';

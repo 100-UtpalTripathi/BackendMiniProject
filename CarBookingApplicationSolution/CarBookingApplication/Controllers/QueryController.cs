@@ -77,7 +77,7 @@ namespace CarBookingApplication.Controllers
         /// Get all queries (Admin only)
         /// </summary>
         /// <returns>List of queries</returns>
-        [Authorize(Roles = "Admin")]
+        [Authorize]
         [HttpGet("get/all")]
         [ProducesResponseType(typeof(IList<Query>), StatusCodes.Status200OK)]
         [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status500InternalServerError)]
@@ -85,7 +85,13 @@ namespace CarBookingApplication.Controllers
         {
             try
             {
-                var queries = await _queryService.GetAllQueriesAsync();
+                var customerId = User.FindFirstValue("eid");
+                if (customerId == null)
+                {
+                    throw new NotLoggedInException("User is not logged in.");
+                }
+
+                var queries = await _queryService.GetAllQueriesAsync(int.Parse(customerId));
                 return Ok(queries);
             }
             catch (Exception ex)

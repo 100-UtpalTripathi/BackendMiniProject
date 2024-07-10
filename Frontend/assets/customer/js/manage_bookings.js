@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     const fetchBookings = () => {
         const token = localStorage.getItem("jwtToken");
-        fetch('http://localhost:5071/api/Customers/bookings', {
+        fetch('http://localhost:5071/api/Bookings', { // Updated endpoint
             headers: {
                 'Authorization': `Bearer ${token}`,
             },
@@ -14,25 +14,39 @@ document.addEventListener('DOMContentLoaded', function () {
             if (!response.ok) {
                 throw new Error('Failed to fetch bookings.');
             }
-            return response.json();
+            // Check if the response is JSON
+            return response.text().then(text => {
+                try {
+                    return JSON.parse(text);
+                } catch {
+                    return text;
+                }
+            });
         })
         .then(bookings => {
             bookingsContainer.innerHTML = '';
+    
+            if (typeof bookings === 'string' && bookings === "No Bookings found!") {
+                const noBookingsMessage = document.createElement('p');
+                noBookingsMessage.textContent = "No bookings found!";
+                bookingsContainer.appendChild(noBookingsMessage);
+                return;
+            }
+    
             bookings.forEach(booking => {
                 const car = booking.car;
                 if (!car) {
                     console.error(`Booking with ID ${booking.id} has no associated car.`);
                     return; // Skip this booking
                 }
-
+    
                 const card = document.createElement('div');
                 card.classList.add('col-md-4');
                 card.innerHTML = `
-                    <div class="card">
+                    <div class="card bg-dark text-light">
                         <div class="card-body">
                             <h5 class="card-title">${car.make} ${car.model}</h5>
                             <p class="card-text">Year: ${car.year}</p>
-                            
                             <p class="card-text">Booking Date: ${new Date(booking.bookingDate).toLocaleDateString()}</p>
                             <p class="card-text">Start Date: ${new Date(booking.startDate).toLocaleDateString()}</p>
                             <p class="card-text">End Date: ${new Date(booking.endDate).toLocaleDateString()}</p>
@@ -40,34 +54,35 @@ document.addEventListener('DOMContentLoaded', function () {
                             <p class="card-text">Discount Amount: $${booking.discountAmount}</p>
                             <p class="card-text">Final Amount: $${booking.finalAmount}</p>
                             <p class="card-text">Status: ${booking.status}</p>
-                            ${new Date(booking.startDate) > new Date() ? `
-                                <button class="btn btn-cancel" data-id="${booking.id}">Cancel Booking</button>
+                            ${(new Date(booking.startDate)) > new Date() && booking.status !== "Cancelled" ? `
+                                <button class="btn btn-danger btn-cancel" data-id="${booking.id}">Cancel Booking</button>
                             ` : ''}
-                            
-                            ${new Date(booking.endDate) > new Date() ? `
-                                <button class="btn btn-extend" data-id="${booking.id}" data-bs-toggle="modal" data-bs-target="#extendBookingModal">Extend Booking</button>
+                            ${new Date(booking.endDate) > new Date() && booking.status !== "Cancelled" ? `
+                                <button class="btn btn-warning btn-extend" data-id="${booking.id}" data-bs-toggle="modal" data-bs-target="#extendBookingModal">Extend Booking</button>
                             ` : ''}
-                            <button class="btn btn-rate" data-id="${booking.id}" data-car-id="${car.id}" data-bs-toggle="modal" data-bs-target="#rateCarModal">Rate Car</button>
+                            ${booking.status !== "Cancelled" && new Date(booking.startDate) < new Date() ? `
+                                <button class="btn btn-success btn-rate" data-id="${booking.id}" data-car-id="${car.id}" data-bs-toggle="modal" data-bs-target="#rateCarModal">Rate Car</button>
+                            ` : ''}
                         </div>
                     </div>
                 `;
                 bookingsContainer.appendChild(card);
             });
-
+    
             document.querySelectorAll('.btn-cancel').forEach(button => {
                 button.addEventListener('click', (event) => {
                     const bookingId = event.target.getAttribute('data-id');
                     cancelBooking(bookingId);
                 });
             });
-
+    
             document.querySelectorAll('.btn-extend').forEach(button => {
                 button.addEventListener('click', (event) => {
                     const bookingId = event.target.getAttribute('data-id');
                     document.getElementById('extendBookingId').value = bookingId;
                 });
             });
-
+    
             document.querySelectorAll('.btn-rate').forEach(button => {
                 button.addEventListener('click', (event) => {
                     const bookingId = event.target.getAttribute('data-id');
@@ -112,7 +127,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const formData = new FormData(extendBookingForm);
         const newEndDate = formData.get('newEndDate');
         const token = localStorage.getItem("jwtToken");
-
+    
         fetch(`http://localhost:5071/api/Bookings/${bookingId}/extend`, {
             method: 'PUT',
             headers: {
@@ -123,7 +138,7 @@ document.addEventListener('DOMContentLoaded', function () {
         })
         .then(response => {
             if (!response.ok) {
-                throw new Error('Failed to extend booking.');
+                return response.json().then(err => { throw new Error(err.message || 'Failed to extend booking.'); });
             }
             return response.json();
         })
@@ -135,7 +150,7 @@ document.addEventListener('DOMContentLoaded', function () {
         })
         .catch(error => {
             console.error('Error extending booking:', error.message);
-            alert('Error extending booking. Please try again later.');
+            alert(`Error: ${error.message}`);
         });
     });
 
