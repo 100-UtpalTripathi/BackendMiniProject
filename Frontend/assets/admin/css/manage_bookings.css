@@ -62,7 +62,7 @@ h1 {
   background-color: #1e1e1e;
   padding: 20px;
   border-radius: 5px;
-  width: calc(33% - 20px);
+  width: 100%;
   box-sizing: border-box;
   transition: transform 0.3s ease, background-color 0.3s ease;
   color: #f8f9fa;
@@ -71,6 +71,14 @@ h1 {
 .card:hover {
   transform: translateY(-10px);
   background-color: #292929;
+}
+
+.card-body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: space-between;
+  height: 100%;
 }
 
 .card button {
@@ -105,12 +113,12 @@ h1 {
 
 @media (max-width: 768px) {
   .card {
-      width: calc(50% - 20px);
+    width: calc(50% - 20px);
   }
 }
 
 @media (max-width: 480px) {
   .card {
-      width: calc(100% - 20px);
+    width: calc(100% - 20px);
   }
 }

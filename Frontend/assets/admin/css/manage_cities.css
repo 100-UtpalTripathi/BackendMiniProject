@@ -113,6 +113,11 @@ button[type="submit"] {
   width: 100%;
 }
 
+.form-control::placeholder, .form-select::placeholder {
+  color: #e0e0e0; /* Make placeholder text white */
+  opacity: 1; /* Make placeholder text fully visible */
+}
+
 @media (max-width: 576px) {
   .card {
       flex-basis: calc(100% - 20px); /* Adjust card width for small screens */

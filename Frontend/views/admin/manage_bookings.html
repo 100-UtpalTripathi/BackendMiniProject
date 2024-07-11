@@ -1,35 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <link
-      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
-      rel="stylesheet"
-    />
-    <title>Manage Bookings</title>
-    <link rel="stylesheet" href="../../assets/admin/css/manage_bookings.css" />
-  </head>
-  <body>
-    <div class="container">
-      <h1>Manage Bookings</h1>
-      <div id="booking-cards-container" class="cards-container"></div>
-    </div>
-
-    <!-- Delete Booking Modal -->
-    <div id="delete-modal" class="modal">
-      <div class="modal-content">
-        <span class="close" onclick="closeDeleteModal()">&times;</span>
-        <h2>Confirm Cancel</h2>
-        <p>Are you sure you want to cancel this booking?</p>
-        <button class="btn btn-danger" onclick="confirmCancel()">Cancel</button>
-        <button class="btn btn-secondary" onclick="closeDeleteModal()">
-          Close
-        </button>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <title>Manage Bookings</title>
+  <link rel="stylesheet" href="../../assets/admin/css/manage_bookings.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Manage Bookings</h1>
+    <div class="row mb-3">
+      <div class="col-12 col-md-4 mb-2">
+        <select id="statusFilter" class="form-select">
+          <option value="">Status</option>
+          <option value="Confirmed">Confirmed</option>
+          <option value="Cancelled">Cancelled</option>
+          <option value="Completed">Completed</option>
+        </select>
+      </div>
+      <div class="col-12 col-md-4 mb-2">
+        <input type="date" id="startDateFilter" class="form-control" placeholder="Start Date" />
+      </div>
+      <div class="col-12 col-md-4 mb-2">
+        <input type="date" id="endDateFilter" class="form-control" placeholder="End Date" />
+      </div>
+      <div class="col-12 text-end">
+        <button id="resetFilters" class="btn btn-secondary">Reset Filters</button>
       </div>
     </div>
+    <div id="bookingCardsContainer" class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4"></div>
+  </div>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="../../assets/admin/js/manage_bookings.js"></script>
-  </body>
+  <!-- Delete Booking Modal -->
+  <div id="delete-modal" class="modal">
+    <div class="modal-content">
+      <span class="close" onclick="closeDeleteModal()">&times;</span>
+      <h2>Confirm Cancel</h2>
+      <p>Are you sure you want to cancel this booking?</p>
+      <button class="btn btn-danger" onclick="confirmCancel()">Cancel</button>
+      <button class="btn btn-secondary" onclick="closeDeleteModal()">Close</button>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="../../assets/admin/js/manage_bookings.js"></script>
+</body>
 </html>

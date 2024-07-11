@@ -15,13 +15,40 @@
     <div class="container mt-5">
       <h1>Manage Cities</h1>
       <button
-        class="btn btn-primary mt-4"
-        style="margin-bottom: 40px"
-        data-bs-toggle="modal"
-        data-bs-target="#addCityModal"
-      >
-        Add City
-      </button>
+          class="btn btn-primary mt-4"
+          style="margin-bottom: 40px"
+          data-bs-toggle="modal"
+          data-bs-target="#addCityModal"
+        >
+          Add New City
+        </button>
+      <div class="row mb-4">
+        
+        <div class="col-md-4">
+          <input
+            type="text"
+            id="searchName"
+            class="form-control"
+            placeholder="Search by Name"
+          />
+        </div>
+        <div class="col-md-4">
+          <input
+            type="text"
+            id="searchState"
+            class="form-control"
+            placeholder="Search by State"
+          />
+        </div>
+        <div class="col-md-4">
+          <input
+            type="text"
+            id="searchCountry"
+            class="form-control"
+            placeholder="Search by Country"
+          />
+        </div>
+      </div>
       <div
         id="citiesContainer"
         class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4"
