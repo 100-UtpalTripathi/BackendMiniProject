@@ -9,38 +9,136 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="../../assets/customer/css/view_cars.css" />
-    
   </head>
   <body class="bg-dark text-light">
     <div class="container mt-5">
-        <h1 class="text-center mb-4">Available Cars</h1>
-        <div id="carsContainer" class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4"></div>
+      <h1 class="text-center mb-4">Available Cars</h1>
+      <div class="row mb-3">
+        <div class="col-12 col-md-6 mb-2">
+          <input
+            type="text"
+            id="searchInput"
+            class="form-control"
+            placeholder="Search by make or model"
+          />
+        </div>
+        <div class="col-12 col-md-2 mb-2">
+          <button class="btn btn-secondary w-100" id="resetButton">
+            Reset
+          </button>
+        </div>
+      </div>
+      <div class="row mb-3">
+        <div class="col-12 col-md-4 mb-2">
+          <select id="categoryFilter" class="form-select">
+            <option value="">Categories</option>
+            <option value="Small">Small</option>
+            <option value="Medium">Medium</option>
+            <option value="Large">Large</option>
+            <option value="SUV">SUV</option>
+            <option value="Premium">Premium</option>
+          </select>
+        </div>
+        <div class="col-12 col-md-4 mb-2">
+          <input
+            type="number"
+            id="yearFilter"
+            class="form-control"
+            placeholder="Year"
+          />
+        </div>
+        <div class="col-12 col-md-4 mb-2">
+          <input
+            type="number"
+            id="seatsFilter"
+            class="form-control"
+            placeholder="Number of Seats"
+          />
+        </div>
+        <div class="col-12 col-md-4 mb-2">
+          <input
+            type="number"
+            id="priceFilter"
+            class="form-control"
+            placeholder="Max Price Per Day"
+          />
+        </div>
+        <div class="col-12 col-md-4 mb-2">
+          <input
+            type="number"
+            id="minRatingFilter"
+            class="form-control"
+            placeholder="Min Rating"
+            step="0.1"
+            min="0"
+            max="5"
+          />
+        </div>
+        <div class="col-12 col-md-4 mb-2">
+          <input
+            type="number"
+            id="maxRatingFilter"
+            class="form-control"
+            placeholder="Max Rating"
+            step="0.1"
+            min="0"
+            max="5"
+          />
+        </div>
+      </div>
+      <div
+        id="carsContainer"
+        class="row row-cols-1 row-cols-sm-2 row-cols-md-3 g-4"
+      ></div>
     </div>
 
     <!-- Book Car Modal -->
-    <div class="modal fade" id="bookCarModal" tabindex="-1" aria-labelledby="bookCarModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content bg-dark text-light">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="bookCarModalLabel">Book Car</h5>
-                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="bookCarForm">
-                        <input type="hidden" id="bookCarId" name="carId">
-                        <div class="mb-3">
-                            <label for="startDate" class="form-label">Start Date</label>
-                            <input type="date" class="form-control" id="startDate" name="startDate" required>
-                        </div>
-                        <div class="mb-3">
-                            <label for="endDate" class="form-label">End Date</label>
-                            <input type="date" class="form-control" id="endDate" name="endDate" required>
-                        </div>
-                        <button type="submit" class="btn btn-primary">Book Now</button>
-                    </form>
-                </div>
-            </div>
+    <div
+      class="modal fade"
+      id="bookCarModal"
+      tabindex="-1"
+      aria-labelledby="bookCarModalLabel"
+      aria-hidden="true"
+    >
+      <div class="modal-dialog">
+        <div class="modal-content bg-dark text-light">
+          <div class="modal-header">
+            <h5 class="modal-title" id="bookCarModalLabel">Book Car</h5>
+            <button
+              type="button"
+              class="btn-close btn-close-white"
+              data-bs-dismiss="modal"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="modal-body">
+            <form id="bookCarForm">
+              <input type="hidden" id="bookCarId" name="carId" />
+              <div class="mb-3">
+                <label for="startDate" class="form-label">Start Date</label>
+                <input
+                  type="date"
+                  class="form-control"
+                  id="startDate"
+                  name="startDate"
+                  required
+                />
+              </div>
+              <div class="mb-3">
+                <label for="endDate" class="form-label">End Date</label>
+                <input
+                  type="date"
+                  class="form-control"
+                  id="endDate"
+                  name="endDate"
+                  required
+                />
+              </div>
+              <button type="submit" class="btn btn-primary">Book Now</button>
+            </form>
+          </div>
         </div>
+      </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

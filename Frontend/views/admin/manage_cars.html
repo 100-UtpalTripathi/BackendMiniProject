@@ -74,12 +74,36 @@
             placeholder="Max Price Per Day"
           />
         </div>
+
+        <div class="col-12 col-md-4 mb-2">
+          <input
+            type="number"
+            id="minRatingFilter"
+            class="form-control"
+            placeholder="Min Rating"
+            step="0.1"
+            min="0"
+            max="5"
+          />
+        </div>
+        <div class="col-12 col-md-4 mb-2">
+          <input
+            type="number"
+            id="maxRatingFilter"
+            class="form-control"
+            placeholder="Max Rating"
+            step="0.1"
+            min="0"
+            max="5"
+          />
+        </div>
       </div>
       <div
         id="carCardsContainer"
         class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4"
       ></div>
     </div>
+    
 
     <!-- Add Car Modal -->
     <div

@@ -1,7 +1,18 @@
 document.addEventListener('DOMContentLoaded', function () {
     const carsContainer = document.getElementById('carsContainer');
     const bookCarForm = document.getElementById('bookCarForm');
+    const searchInput = document.getElementById('searchInput');
+    const categoryFilter = document.getElementById('categoryFilter');
+    const yearFilter = document.getElementById('yearFilter');
+    const seatsFilter = document.getElementById('seatsFilter');
+    const priceFilter = document.getElementById('priceFilter');
+    const minRatingFilter = document.getElementById('minRatingFilter');
+    const maxRatingFilter = document.getElementById('maxRatingFilter');
+    const resetButton = document.getElementById('resetButton');
 
+    let carsData = []; // To store original data fetched
+
+    // Function to fetch cars data
     const fetchCars = () => {
         const token = localStorage.getItem("jwtToken");
         fetch('http://localhost:5071/api/Customers/view-cars', {
@@ -17,8 +28,31 @@ document.addEventListener('DOMContentLoaded', function () {
             return response.json();
         })
         .then(cars => {
-            carsContainer.innerHTML = '';
-            cars.forEach(car => {
+            carsData = cars; // Store original data
+            renderCars(cars); // Initial rendering of cars
+        })
+        .catch(error => {
+            console.error('Error fetching cars:', error.message);
+            alert('Error fetching cars. Please try again later.');
+        });
+    };
+
+    // Function to render cars based on filters
+    const renderCars = (cars) => {
+        carsContainer.innerHTML = '';
+        cars.forEach(car => {
+            // Apply filters here
+            if (
+                (searchInput.value.trim() === '' || 
+                 car.make.toLowerCase().includes(searchInput.value.toLowerCase()) || 
+                 car.model.toLowerCase().includes(searchInput.value.toLowerCase())) &&
+                (categoryFilter.value === '' || car.category === categoryFilter.value) &&
+                (yearFilter.value === '' || car.year == yearFilter.value) &&
+                (seatsFilter.value === '' || car.numberOfSeats >= seatsFilter.value) &&
+                (priceFilter.value === '' || car.pricePerDay <= priceFilter.value) &&
+                (minRatingFilter.value === '' || (car.averageRating && car.averageRating >= minRatingFilter.value)) &&
+                (maxRatingFilter.value === '' || (car.averageRating && car.averageRating <= maxRatingFilter.value))
+            ) {
                 const card = document.createElement('div');
                 card.classList.add('col');
                 card.innerHTML = 
@@ -36,21 +70,64 @@ document.addEventListener('DOMContentLoaded', function () {
                         </div>
                     </div>`;
                 carsContainer.appendChild(card);
-            });
+            }
+        });
 
-            document.querySelectorAll('.btn-book').forEach(button => {
-                button.addEventListener('click', (event) => {
-                    const carId = event.target.getAttribute('data-id');
-                    document.getElementById('bookCarId').value = carId;
-                });
+        // If no cars match filters
+        if (carsContainer.children.length === 0) {
+            carsContainer.innerHTML = '<p>No cars found.</p>';
+        }
+
+        // Attach event listeners to book buttons
+        document.querySelectorAll('.btn-book').forEach(button => {
+            button.addEventListener('click', (event) => {
+                const carId = event.target.getAttribute('data-id');
+                document.getElementById('bookCarId').value = carId;
             });
-        })
-        .catch(error => {
-            console.error('Error fetching cars:', error.message);
-            alert('Error fetching cars. Please try again later.');
         });
     };
 
+    // Event listeners for filters
+    searchInput.addEventListener('input', () => {
+        renderCars(carsData);
+    });
+
+    categoryFilter.addEventListener('change', () => {
+        renderCars(carsData);
+    });
+
+    yearFilter.addEventListener('input', () => {
+        renderCars(carsData);
+    });
+
+    seatsFilter.addEventListener('input', () => {
+        renderCars(carsData);
+    });
+
+    priceFilter.addEventListener('input', () => {
+        renderCars(carsData);
+    });
+
+    minRatingFilter.addEventListener('input', () => {
+        renderCars(carsData);
+    });
+
+    maxRatingFilter.addEventListener('input', () => {
+        renderCars(carsData);
+    });
+
+    resetButton.addEventListener('click', () => {
+        searchInput.value = '';
+        categoryFilter.value = '';
+        yearFilter.value = '';
+        seatsFilter.value = '';
+        priceFilter.value = '';
+        minRatingFilter.value = '';
+        maxRatingFilter.value = '';
+        renderCars(carsData);
+    });
+
+    // Function to handle form submission for booking
     bookCarForm.addEventListener('submit', function (event) {
         event.preventDefault();
         const carId = document.getElementById('bookCarId').value;
@@ -84,7 +161,7 @@ document.addEventListener('DOMContentLoaded', function () {
             bookCarForm.reset();
             const bookCarModal = bootstrap.Modal.getInstance(document.getElementById('bookCarModal'));
             bookCarModal.hide();
-            fetchCars();
+            fetchCars(); // Refresh car list after booking
         })
         .catch(async error => {
             let errorMessage = 'Error booking car.';
@@ -97,5 +174,6 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
+    // Initial fetch and render
     fetchCars();
 });

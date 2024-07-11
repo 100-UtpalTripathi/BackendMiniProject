@@ -57,9 +57,15 @@ h1 {
     border: 1px solid #555;
 }
 
+
 .form-control:focus {
     background-color: #2e2e2e;
     color: #e0e0e0;
     border-color: #007bff;
     box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+}
+
+.form-control::placeholder {
+    color: #ffffff;
+    opacity: 1;
 }

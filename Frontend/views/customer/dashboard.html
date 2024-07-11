@@ -22,7 +22,7 @@
             <li class="nav-item"><a class="nav-link" href="#" onclick="loadIframe('view_bookings.html')">Bookings</a></li>
             <li class="nav-item"><a class="nav-link" href="#" onclick="loadIframe('view_queries.html')">Ask-Queries</a></li>
             <li class="nav-item"><a class="nav-link" href="#" onclick="loadIframe('view_profile.html')">Profile</a></li>
-            
+            <li class="nav-item"><a class="nav-link" href="#" onclick="logout()">Logout</a></li> <!-- Added Logout link -->
           </ul>
         </div>
       </div>
@@ -37,6 +37,11 @@
     <script>
       function loadIframe(page) {
         document.getElementById('contentFrame').src = page;
+      }
+  
+      function logout() {
+        localStorage.removeItem('jwtToken'); // Remove JWT token from localStorage
+        window.location.href = "../../login.html"; // Redirect to login page
       }
     </script>
   </body>

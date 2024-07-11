@@ -8,6 +8,8 @@ document.addEventListener("DOMContentLoaded", function () {
   const seatsFilter = document.getElementById("seatsFilter");
   const priceFilter = document.getElementById("priceFilter");
   const resetButton = document.getElementById("resetButton");
+  const minRatingFilter = document.getElementById("minRatingFilter");
+  const maxRatingFilter = document.getElementById("maxRatingFilter");
   let allCars = [];
 
   const fetchCars = () => {
@@ -51,6 +53,7 @@ document.addEventListener("DOMContentLoaded", function () {
                       <p class="card-text">Transmission: ${car.transmission}</p>
                       <p class="card-text">Seats: ${car.numberOfSeats}</p>
                       <p class="card-text">Category: ${car.category}</p>
+                      <p class="card-text">Rating: ${car.averageRating}</p>
                       <p class="card-text">Price Per Day: $${car.pricePerDay}</p>
                       <button class="btn btn-edit" data-bs-toggle="modal" data-bs-target="#editCarModal" 
                           data-id="${car.id}"
@@ -131,6 +134,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const year = yearFilter.value;
     const seats = seatsFilter.value;
     const price = priceFilter.value;
+    const minRating = minRatingFilter.value;
+    const maxRating = maxRatingFilter.value;
 
     const filteredCars = allCars.filter((car) => {
       const makeMatch = car.make.toLowerCase().includes(query);
@@ -139,13 +144,19 @@ document.addEventListener("DOMContentLoaded", function () {
       const yearMatch = !year || car.year === parseInt(year);
       const seatsMatch = !seats || car.numberOfSeats === parseInt(seats);
       const priceMatch = !price || car.pricePerDay <= parseFloat(price);
+      const minRatingMatch =
+        !minRating || car.averageRating >= parseFloat(minRating);
+      const maxRatingMatch =
+        !maxRating || car.averageRating <= parseFloat(maxRating);
 
       return (
         (makeMatch || modelMatch) &&
         categoryMatch &&
         yearMatch &&
         seatsMatch &&
-        priceMatch
+        priceMatch &&
+        minRatingMatch &&
+        maxRatingMatch
       );
     });
 
@@ -157,6 +168,8 @@ document.addEventListener("DOMContentLoaded", function () {
   yearFilter.addEventListener("input", applyFilters);
   seatsFilter.addEventListener("input", applyFilters);
   priceFilter.addEventListener("input", applyFilters);
+  minRatingFilter.addEventListener("input", applyFilters);
+  maxRatingFilter.addEventListener("input", applyFilters);
 
   resetButton.addEventListener("click", function () {
     searchInput.value = "";
