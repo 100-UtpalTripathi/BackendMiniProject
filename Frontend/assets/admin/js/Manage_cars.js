@@ -46,7 +46,6 @@ document.addEventListener("DOMContentLoaded", function () {
       card.innerHTML = `<div class="card">
                   <div class="card-body">
                       <h5 class="card-title">${car.make} ${car.model}</h5>
-                      <p class="card-text">ID: ${car.id}</p>
                       <p class="card-text">Year: ${car.year}</p>
                       <p class="card-text">City ID: ${car.cityId}</p>
                       <p class="card-text">Status: ${car.status}</p>
@@ -261,3 +260,198 @@ document.addEventListener("DOMContentLoaded", function () {
 
   fetchCars();
 });
+
+// Validation functions
+function validateMake() {
+  const make = document.getElementById("make");
+  const makeError = document.getElementById("makeError");
+  const regex = /^.{1,20}$/;
+  if (make.value.trim() === "") {
+      make.classList.add("error");
+      make.classList.remove("correct");
+      makeError.textContent = "Make is required.";
+  } else if (!regex.test(make.value)) {
+      make.classList.add("error");
+      make.classList.remove("correct");
+      makeError.textContent = "Make can't be longer than 20 characters.";
+  } else {
+      make.classList.remove("error");
+      make.classList.add("correct");
+      makeError.textContent = "";
+  }
+}
+
+function validateModel() {
+  const model = document.getElementById("model");
+  const modelError = document.getElementById("modelError");
+  const regex = /^.{1,20}$/;
+  if (model.value.trim() === "") {
+      model.classList.add("error");
+      model.classList.remove("correct");
+      modelError.textContent = "Model is required.";
+  } else if (!regex.test(model.value)) {
+      model.classList.add("error");
+      model.classList.remove("correct");
+      modelError.textContent = "Model can't be longer than 20 characters.";
+  } else {
+      model.classList.remove("error");
+      model.classList.add("correct");
+      modelError.textContent = "";
+  }
+}
+
+function validateYear() {
+  const year = document.getElementById("year");
+  const yearError = document.getElementById("yearError");
+  const regex = /^(1886|188[7-9]|18[9-9][0-9]|19[0-9]{2}|200[0-9]|201[0-9]|202[0-9]|203[0-9]|204[0-9]|205[0-9]|20[6-9][0-9]|9999)$/;
+  if (year.value.trim() === "") {
+      year.classList.add("error");
+      year.classList.remove("correct");
+      yearError.textContent = "Year is required.";
+  } else if (!regex.test(year.value)) {
+      year.classList.add("error");
+      year.classList.remove("correct");
+      yearError.textContent = "Year must be a valid year.";
+  } 
+  else if(parseInt(year.value) > new Date().getFullYear()){
+    year.classList.add("error");
+    year.classList.remove("correct");
+    yearError.textContent = "Year must be a valid year.";
+  }
+  else {
+      year.classList.remove("error");
+      year.classList.add("correct");
+      yearError.textContent = "";
+  }
+}
+
+function validateCityId() {
+  const cityId = document.getElementById("cityId");
+  const cityIdError = document.getElementById("cityIdError");
+  if (cityId.value.trim() === "") {
+      cityId.classList.add("error");
+      cityId.classList.remove("correct");
+      cityIdError.textContent = "City ID is required.";
+  } else {
+      cityId.classList.remove("error");
+      cityId.classList.add("correct");
+      cityIdError.textContent = "";
+  }
+}
+
+
+
+function validateNumberOfSeats() {
+  const numberOfSeats = document.getElementById("numberOfSeats");
+  const numberOfSeatsError = document.getElementById("numberOfSeatsError");
+  const regex = /^[1-9]|1[0-9]|20$/;
+  if (numberOfSeats.value.trim() === "") {
+      numberOfSeats.classList.add("error");
+      numberOfSeats.classList.remove("correct");
+      numberOfSeatsError.textContent = "Number of seats is required.";
+  } else if (!regex.test(numberOfSeats.value)) {
+      numberOfSeats.classList.add("error");
+      numberOfSeats.classList.remove("correct");
+      numberOfSeatsError.textContent = "Number of seats must be between 1 and 20.";
+  } else {
+      numberOfSeats.classList.remove("error");
+      numberOfSeats.classList.add("correct");
+      numberOfSeatsError.textContent = "";
+  }
+}
+
+function validateEditMake(){
+  const make = document.getElementById("editMake");
+  const makeError = document.getElementById("editMakeError");
+  const regex = /^.{1,20}$/;
+  if (make.value.trim() === "") {
+      make.classList.add("error");
+      make.classList.remove("correct");
+      makeError.textContent = "Make is required.";
+  } else if (!regex.test(make.value)) {
+      make.classList.add("error");
+      make.classList.remove("correct");
+      makeError.textContent = "Make can't be longer than 20 characters.";
+  } else {
+      make.classList.remove("error");
+      make.classList.add("correct");
+      makeError.textContent = "";
+  }
+}
+
+function validateEditModel(){
+  const model = document.getElementById("editModel");
+  const modelError = document.getElementById("editModelError");
+  const regex = /^.{1,20}$/;
+  if (model.value.trim() === "") {
+      model.classList.add("error");
+      model.classList.remove("correct");
+      modelError.textContent = "Model is required.";
+  } else if (!regex.test(model.value)) {
+      model.classList.add("error");
+      model.classList.remove("correct");
+      modelError.textContent = "Model can't be longer than 20 characters.";
+  } else {
+      model.classList.remove("error");
+      model.classList.add("correct");
+      modelError.textContent = "";
+  }
+}
+
+function validateEditYear(){
+  const year = document.getElementById("editYear");
+  const yearError = document.getElementById("editYearError");
+  const regex = /^(1886|188[7-9]|18[9-9][0-9]|19[0-9]{2}|200[0-9]|201[0-9]|202[0-9]|203[0-9]|204[0-9]|205[0-9]|20[6-9][0-9]|9999)$/;
+  if (year.value.trim() === "") {
+      year.classList.add("error");
+      year.classList.remove("correct");
+      yearError.textContent = "Year is required.";
+  } else if (!regex.test(year.value)) {
+      year.classList.add("error");
+      year.classList.remove("correct");
+      yearError.textContent = "Year must be a valid year.";
+  } else if(parseInt(year.value) > new Date().getFullYear()){
+      year.classList.add("error");
+      year.classList.remove("correct");
+      yearError.textContent = "Year must be a valid year.";
+  }
+  else {
+      year.classList.remove("error");
+      year.classList.add("correct");
+      yearError.textContent = "";
+  }
+}
+
+function validateEditCityId(){
+  const cityId = document.getElementById("editCityId");
+  const cityIdError = document.getElementById("editCityIdError");
+  if (cityId.value.trim() === "") {
+      cityId.classList.add("error");
+      cityId.classList.remove("correct");
+      cityIdError.textContent = "City ID is required.";
+  } else {
+      cityId.classList.remove("error");
+      cityId.classList.add("correct");
+      cityIdError.textContent = "";
+  }
+}
+
+function validateEditNumberOfSeats(){
+  const numberOfSeats = document.getElementById("editNumberOfSeats");
+  const numberOfSeatsError = document.getElementById("editNumberOfSeatsError");
+  const regex = /^[1-9]|1[0-9]|20$/;
+  if (numberOfSeats.value.trim() === "") {
+      numberOfSeats.classList.add("error");
+      numberOfSeats.classList.remove("correct");
+      numberOfSeatsError.textContent = "Number of seats is required.";
+  } else if (!regex.test(numberOfSeats.value)) {
+      numberOfSeats.classList.add("error");
+      numberOfSeats.classList.remove("correct");
+      numberOfSeatsError.textContent = "Number of seats must be between 1 and 20.";
+  } else {
+      numberOfSeats.classList.remove("error");
+      numberOfSeats.classList.add("correct");
+      numberOfSeatsError.textContent = "";
+  }
+}
+

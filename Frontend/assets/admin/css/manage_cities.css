@@ -151,3 +151,19 @@ button[type="submit"] {
       padding: 0; /* Reset padding for extra large screens */
   }
 }
+
+.error {
+  border-color: #ff293e !important;
+  box-shadow: 0 0 0 0.2rem rgba(215, 20, 39, 0.785) !important;
+}
+
+.correct {
+  border-color: #2aff5c !important;
+  box-shadow: 0 0 0 0.2rem rgb(18, 255, 73) !important;
+}
+
+.error-message {
+  color: red;
+  font-size: 0.875em;
+  margin-top: 0.25em;
+}

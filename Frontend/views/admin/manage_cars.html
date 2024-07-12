@@ -134,7 +134,9 @@
                   id="make"
                   name="make"
                   required
+                  onblur="validateMake()"
                 />
+                <div id="makeError" class="error-message"></div>
               </div>
               <div class="mb-3">
                 <label for="model" class="form-label">Model</label>
@@ -144,7 +146,9 @@
                   id="model"
                   name="model"
                   required
+                  onblur="validateModel()"
                 />
+                <div id="modelError" class="error-message"></div>
               </div>
               <div class="mb-3">
                 <label for="year" class="form-label">Year</label>
@@ -154,8 +158,11 @@
                   id="year"
                   name="year"
                   required
+                  onblur="validateYear()"
                 />
+                <div id="yearError" class="error-message"></div>
               </div>
+
               <div class="mb-3">
                 <label for="cityId" class="form-label">City ID</label>
                 <input
@@ -164,7 +171,9 @@
                   id="cityId"
                   name="cityId"
                   required
+                  onblur="validateCityId()"
                 />
+                <div id="cityIdError" class="error-message"></div>
               </div>
               <div class="mb-3">
                 <label for="status" class="form-label">Status</label>
@@ -204,7 +213,9 @@
                   required
                   min="1"
                   max="20"
+                  onblur="validateNumberOfSeats()"
                 />
+                <div id="numberOfSeatsError" class="error-message"></div>
               </div>
               <div class="mb-3">
                 <label for="category" class="form-label">Category</label>
@@ -272,7 +283,9 @@
                   id="editMake"
                   name="make"
                   required
+                  onblur="validateEditMake()"
                 />
+                <div id="editMakeError" class="error-message"></div>
               </div>
               <div class="mb-3">
                 <label for="editModel" class="form-label">Model</label>
@@ -282,7 +295,9 @@
                   id="editModel"
                   name="model"
                   required
+                  onblur="validateEditModel()"
                 />
+                <div id="editModelError" class="error-message"></div>
               </div>
               <div class="mb-3">
                 <label for="editYear" class="form-label">Year</label>
@@ -292,7 +307,9 @@
                   id="editYear"
                   name="year"
                   required
+                  onblur="validateEditYear()"
                 />
+                <div id="editYearError" class="error-message"></div>
               </div>
               <div class="mb-3">
                 <label for="editCityId" class="form-label">City ID</label>
@@ -302,7 +319,9 @@
                   id="editCityId"
                   name="cityId"
                   required
+                  onblur="validateEditCityId()"
                 />
+                <div id="editCityIdError" class="error-message"></div>
               </div>
               <div class="mb-3">
                 <label for="editStatus" class="form-label">Status</label>
@@ -347,7 +366,9 @@
                   required
                   min="1"
                   max="20"
+                  onblur="validateEditNumberOfSeats()"
                 />
+                <div id="editNumberOfSeatsError" class="error-message"></div>
               </div>
               <div class="mb-3">
                 <label for="editCategory" class="form-label">Category</label>

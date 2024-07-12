@@ -201,3 +201,158 @@ document.addEventListener('DOMContentLoaded', function () {
     // Initial fetch of cities
     fetchCities();
 });
+
+
+// function to validate the form
+// Validation functions
+function validateCityName() {
+    const name = document.getElementById("name");
+    const nameError = document.getElementById("nameError");
+    const regex = /^.{1,100}$/;
+    if (name.value.trim() === "") {
+        name.classList.add("error");
+        name.classList.remove("correct");
+        nameError.textContent = "City name is required.";
+    } else if (!regex.test(name.value)) {
+        name.classList.add("error");
+        name.classList.remove("correct");
+        nameError.textContent = "City name can't be longer than 100 characters.";
+    } else {
+        name.classList.remove("error");
+        name.classList.add("correct");
+        nameError.textContent = "";
+    }
+}
+
+function validateState() {
+    const state = document.getElementById("state");
+    const stateError = document.getElementById("stateError");
+    const regex = /^.{1,100}$/;
+    if (state.value.trim() === "") {
+        state.classList.add("error");
+        state.classList.remove("correct");
+        stateError.textContent = "State is required.";
+    } else if (!regex.test(state.value)) {
+        state.classList.add("error");
+        state.classList.remove("correct");
+        stateError.textContent = "State can't be longer than 100 characters.";
+    } else {
+        state.classList.remove("error");
+        state.classList.add("correct");
+        stateError.textContent = "";
+    }
+}
+
+function validateCountry() {
+    const country = document.getElementById("country");
+    const countryError = document.getElementById("countryError");
+    const regex = /^.{1,100}$/;
+    if (country.value.trim() === "") {
+        country.classList.add("error");
+        country.classList.remove("correct");
+        countryError.textContent = "Country is required.";
+    } else if (!regex.test(country.value)) {
+        country.classList.add("error");
+        country.classList.remove("correct");
+        countryError.textContent = "Country can't be longer than 100 characters.";
+    } else {
+        country.classList.remove("error");
+        country.classList.add("correct");
+        countryError.textContent = "";
+    }
+}
+
+function validatePincode() {
+    const pincode = document.getElementById("pincode");
+    const pincodeError = document.getElementById("pincodeError");
+    const regex = /^[0-9]{1,6}$/;
+    if (pincode.value.trim() === "") {
+        pincode.classList.add("error");
+        pincode.classList.remove("correct");
+        pincodeError.textContent = "Pincode is required.";
+    } else if (!regex.test(pincode.value)) {
+        pincode.classList.add("error");
+        pincode.classList.remove("correct");
+        pincodeError.textContent = "Pincode can't be longer than 6 characters.";
+    } else {
+        pincode.classList.remove("error");
+        pincode.classList.add("correct");
+        pincodeError.textContent = "";
+    }
+}
+
+function validateEditCityName() {
+    const name = document.getElementById("editName");
+    const nameError = document.getElementById("editNameError");
+    const regex = /^.{1,100}$/;
+    if (name.value.trim() === "") {
+        name.classList.add("error");
+        name.classList.remove("correct");
+        nameError.textContent = "City name is required.";
+    } else if (!regex.test(name.value)) {
+        name.classList.add("error");
+        name.classList.remove("correct");
+        nameError.textContent = "City name can't be longer than 100 characters.";
+    } else {
+        name.classList.remove("error");
+        name.classList.add("correct");
+        nameError.textContent = "";
+    }
+}
+
+function validateEditState() {
+    const state = document.getElementById("editState");
+    const stateError = document.getElementById("editStateError");
+    const regex = /^.{1,100}$/;
+    if (state.value.trim() === "") {
+        state.classList.add("error");
+        state.classList.remove("correct");
+        stateError.textContent = "State is required.";
+    } else if (!regex.test(state.value)) {
+        state.classList.add("error");
+        state.classList.remove("correct");
+        stateError.textContent = "State can't be longer than 100 characters.";
+    } else {
+        state.classList.remove("error");
+        state.classList.add("correct");
+        stateError.textContent = "";
+    }
+}
+
+function validateEditCountry() {
+    const country = document.getElementById("editCountry");
+    const countryError = document.getElementById("editCountryError");
+    const regex = /^.{1,100}$/;
+    if (country.value.trim() === "") {
+        country.classList.add("error");
+        country.classList.remove("correct");
+        countryError.textContent = "Country is required.";
+    } else if (!regex.test(country.value)) {
+        country.classList.add("error");
+        country.classList.remove("correct");
+        countryError.textContent = "Country can't be longer than 100 characters.";
+    } else {
+        country.classList.remove("error");
+        country.classList.add("correct");
+        countryError.textContent = "";
+    }
+}
+
+function validateEditPincode() {
+    const pincode = document.getElementById("editPincode");
+    const pincodeError = document.getElementById("editPincodeError");
+    const regex = /^[0-9]{1,6}$/;
+    if (pincode.value.trim() === "") {
+        pincode.classList.add("error");
+        pincode.classList.remove("correct");
+        pincodeError.textContent = "Pincode is required.";
+    } else if (!regex.test(pincode.value)) {
+        pincode.classList.add("error");
+        pincode.classList.remove("correct");
+        pincodeError.textContent = "Pincode can't be longer than 6 characters.";
+    } else {
+        pincode.classList.remove("error");
+        pincode.classList.add("correct");
+        pincodeError.textContent = "";
+    }
+}

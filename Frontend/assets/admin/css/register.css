@@ -1,29 +1,43 @@
 body {
-    background-color: #121212;
-    color: #f8f9fa;
-    font-family: Arial, sans-serif;
-  }
+  background-color: #121212;
+  color: #f8f9fa;
+  font-family: Arial, sans-serif;
+}
 .navbar {
-    background-color: #1f1f1f;
-  }
-  .navbar-brand {
-    color: #e63946 !important;
-    font-weight: bold;
-  }
-  .nav-link {
-    color: #f8f9fa !important;
-    transition: color 0.3s ease;
-  }
-  .nav-link:hover {
-    color: #e63946 !important;
-  }
+  background-color: #1f1f1f;
+}
+.navbar-brand {
+  color: #e63946 !important;
+  font-weight: bold;
+}
+.nav-link {
+  color: #f8f9fa !important;
+  transition: color 0.3s ease;
+}
+.nav-link:hover {
+  color: #e63946 !important;
+}
 
-  .card {
-    background-color: #1f1f1f;
-    border: 1px solid #343a40;
-    border-radius: 0;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    color: #f8f9fa;
-  }
+.card {
+  background-color: #1f1f1f;
+  border: 1px solid #343a40;
+  border-radius: 0;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  color: #f8f9fa;
+}
 
-  
+.error {
+  border-color: #ff293e !important;
+  box-shadow: 0 0 0 0.2rem rgba(215, 20, 39, 0.785) !important;
+}
+
+.correct {
+  border-color: #2aff5c !important;
+  box-shadow: 0 0 0 0.2rem rgb(18, 255, 73) !important;
+}
+
+.error-message {
+  color: red;
+  font-size: 0.875em;
+  margin-top: 0.25em;
+}

@@ -12,7 +12,7 @@
     <link rel="stylesheet" href="../../assets/admin/css/manage_cities.css" />
   </head>
   <body>
-    <div class="container mt-5">
+    <div class="container mt-5 ml-9">
       <h1>Manage Cities</h1>
       <button
           class="btn btn-primary mt-4"
@@ -84,7 +84,9 @@
                   id="name"
                   name="name"
                   required
+                  onblur="validateCityName()"
                 />
+                <span id="nameError" class="error-message"></span>
               </div>
               <div class="mb-3">
                 <label for="state" class="form-label">State</label>
@@ -94,7 +96,9 @@
                   id="state"
                   name="state"
                   required
+                  onblur="validateState()"
                 />
+                <span id="stateError" class="error-message"></span>
               </div>
               <div class="mb-3">
                 <label for="country" class="form-label">Country</label>
@@ -104,7 +108,9 @@
                   id="country"
                   name="country"
                   required
+                  onblur="validateCountry()"
                 />
+                <span id="countryError" class="error-message"></span>
               </div>
               <div class="mb-3">
                 <label for="pincode" class="form-label">Pincode</label>
@@ -114,7 +120,9 @@
                   id="pincode"
                   name="pincode"
                   required
+                  onblur="validatePincode()"
                 />
+                <span id="pincodeError" class="error-message"></span>
               </div>
               <button type="submit" class="btn btn-primary">Add City</button>
             </form>
@@ -153,7 +161,9 @@
                   id="editName"
                   name="name"
                   required
+                  onblur="validateEditCityName()"
                 />
+                <span id="editNameError" class="error-message"></span>
               </div>
               <div class="mb-3">
                 <label for="editState" class="form-label">State</label>
@@ -163,7 +173,9 @@
                   id="editState"
                   name="state"
                   required
+                  onblur="validateEditState()"
                 />
+                <div id="editStateError" class="error-message"></div>
               </div>
               <div class="mb-3">
                 <label for="editCountry" class="form-label">Country</label>
@@ -173,7 +185,9 @@
                   id="editCountry"
                   name="country"
                   required
+                  onblur="validateEditCountry()"
                 />
+                <div id="editCountryError" class="error-message"></div>
               </div>
               <div class="mb-3">
                 <label for="editPincode" class="form-label">Pincode</label>
@@ -183,7 +197,9 @@
                   id="editPincode"
                   name="pincode"
                   required
+                  onblur="validateEditPincode()"
                 />
+                <div id="editPincodeError" class="error-message">
               </div>
               <button type="submit" class="btn btn-primary">Update City</button>
             </form>

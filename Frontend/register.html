@@ -72,8 +72,11 @@
                       name="name"
                       id="name"
                       required
+                      onblur="validateName()"
                     />
+                    
                   </div>
+                  <div id="nameError" class="error-message"></div>
                 </div>
                 <div class="mb-3">
                   <label for="dateOfBirth" class="form-label"
@@ -104,8 +107,10 @@
                       name="phone"
                       id="phone"
                       required
+                      onblur="validatePhone()"
                     />
                   </div>
+                  <div id="phoneError" class="error-message"></div>
                 </div>
                 <div class="mb-3">
                   <label for="image" class="form-label">Upload Image</label>
@@ -148,8 +153,10 @@
                       name="email"
                       id="email"
                       required
+                      onblur="validateEmail()"
                     />
                   </div>
+                  <div id="emailError" class="error-message"></div>
                 </div>
                 <div class="mb-3">
                   <label for="password" class="form-label">Password</label>
@@ -163,8 +170,10 @@
                       name="password"
                       id="password"
                       required
+                      onblur="validatePassword()"
                     />
                   </div>
+                  <div id="passwordError" class="error-message"></div>
                 </div>
                 <div class="d-grid">
                   <button type="submit" class="btn btn-primary">
