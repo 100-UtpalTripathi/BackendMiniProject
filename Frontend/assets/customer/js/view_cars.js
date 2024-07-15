@@ -177,3 +177,49 @@ document.addEventListener('DOMContentLoaded', function () {
     // Initial fetch and render
     fetchCars();
 });
+
+
+
+// Validation functions
+function validationStartDate() {
+    const startDate = document.getElementById("startDate");
+    const startDateError = document.getElementById("startDateError");
+    const today = new Date().setHours(0, 0, 0, 0);
+    const inputDate = new Date(startDate.value).setHours(0, 0, 0, 0);
+
+    if (startDate.value.trim() === "") {
+        startDate.classList.add("error");
+        startDate.classList.remove("correct");
+        startDateError.textContent = "Start date is required.";
+    } else if (inputDate < today) {
+        startDate.classList.add("error");
+        startDate.classList.remove("correct");
+        startDateError.textContent = "Start date cannot be in the past.";
+    } else {
+        startDate.classList.remove("error");
+        startDate.classList.add("correct");
+        startDateError.textContent = "";
+    }
+}
+
+function validationEndDate() {
+    const startDate = document.getElementById("startDate");
+    const endDate = document.getElementById("endDate");
+    const endDateError = document.getElementById("endDateError");
+    const startDateValue = new Date(startDate.value).setHours(0, 0, 0, 0);
+    const endDateValue = new Date(endDate.value).setHours(0, 0, 0, 0);
+
+    if (endDate.value.trim() === "") {
+        endDate.classList.add("error");
+        endDate.classList.remove("correct");
+        endDateError.textContent = "End date is required.";
+    } else if (endDateValue <= startDateValue) {
+        endDate.classList.add("error");
+        endDate.classList.remove("correct");
+        endDateError.textContent = "End date must be after the start date.";
+    } else {
+        endDate.classList.remove("error");
+        endDate.classList.add("correct");
+        endDateError.textContent = "";
+    }
+}

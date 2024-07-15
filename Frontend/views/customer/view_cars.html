@@ -122,7 +122,9 @@
                   id="startDate"
                   name="startDate"
                   required
+                  onblur="validationStartDate()"
                 />
+                <div id="startDateError" class="error-message"></div>
               </div>
               <div class="mb-3">
                 <label for="endDate" class="form-label">End Date</label>
@@ -132,7 +134,9 @@
                   id="endDate"
                   name="endDate"
                   required
+                  onblur = "validationEndDate()"
                 />
+                <div id="endDateError" class="error-message"></div>
               </div>
               <button type="submit" class="btn btn-primary">Book Now</button>
             </form>
