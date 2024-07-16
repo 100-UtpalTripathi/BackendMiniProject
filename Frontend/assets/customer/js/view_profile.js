@@ -139,3 +139,83 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   }
 });
+
+
+
+// validation functions
+var validateName = () => {
+  const name = document.getElementById("editName");
+  const nameError = document.getElementById("editNameError");
+  const regex = /^[a-zA-Z\s]+$/;
+  if (name.value.trim() === "") {
+    name.classList.add("error");
+    name.classList.remove("correct");
+    nameError.textContent = "Name is required.";
+  } else if (!regex.test(name.value)) {
+    name.classList.add("error");
+    name.classList.remove("correct");
+    nameError.textContent = "Name must contain only letters and spaces.";
+  } else {
+    name.classList.remove("error");
+    name.classList.add("correct");
+    nameError.textContent = "";
+  }
+};
+
+function validatePhone() {
+  const phone = document.getElementById("editPhone");
+  const phoneError = document.getElementById("editPhoneError");
+  const regex = /^\d{10}$/;
+  if (phone.value.trim() === "") {
+    phone.classList.add("error");
+    phone.classList.remove("correct");
+    phoneError.textContent = "Phone number is required.";
+  } else if (!regex.test(phone.value)) {
+    phone.classList.add("error");
+    phone.classList.remove("correct");
+    phoneError.textContent = "Phone number must be 10 digits.";
+  } else {
+    phone.classList.remove("error");
+    phone.classList.add("correct");
+    phoneError.textContent = "";
+  }
+}
+
+function validateEmail() {
+  const email = document.getElementById("editEmail");
+  const emailError = document.getElementById("editEmailError");
+  const regex = /^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,4}$/;
+  if (email.value.trim() === "") {
+    email.classList.add("error");
+    email.classList.remove("correct");
+    emailError.textContent = "Email is required.";
+  } else if (!regex.test(email.value)) {
+    email.classList.add("error");
+    email.classList.remove("correct");
+    emailError.textContent = "Email is not valid.";
+  } else {
+    email.classList.remove("error");
+    email.classList.add("correct");
+    emailError.textContent = "";
+  }
+}
+
+function validatePassword() {
+  const password = document.getElementById("editPassword");
+  const passwordError = document.getElementById("editPasswordError");
+  const regex = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{6,20}$/;
+  if (password.value.trim() === "") {
+    password.classList.add("error");
+    password.classList.remove("correct");
+    passwordError.textContent = "Password is required.";
+  } else if (!regex.test(password.value)) {
+    password.classList.add("error");
+    password.classList.remove("correct");
+    passwordError.textContent =
+      "Password must be 6-20 characters with at least one digit, one lowercase letter, and one uppercase letter.";
+  } else {
+    password.classList.remove("error");
+    password.classList.add("correct");
+    passwordError.textContent = "";
+  }
+}

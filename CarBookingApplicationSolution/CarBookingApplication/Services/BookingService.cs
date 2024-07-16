@@ -369,7 +369,7 @@ namespace CarBookingApplication.Services
             }
             else
             {
-                decimal rate  = ((decimal)car.PricePerDay / 24) * 1.5m; // 1.5 times the hourly rate
+                decimal rate  = ((decimal)car.PricePerDay / 24) * 1.2m; // 1.2 times the hourly rate
                 decimal cancellationFee = (decimal)remainingHours * rate; // Assuming $40 per hour
                 return cancellationFee;
             }

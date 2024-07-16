@@ -130,11 +130,13 @@ document.addEventListener('DOMContentLoaded', function () {
         })
         .then(response => {
             if (!response.ok) {
-                throw new Error('Failed to cancel booking.');
+                return response.json().then(err => { throw new Error(err.message || 'Failed to cancel booking.'); });
             }
             return response.json();
         })
-        .then(() => {
+        .then(data => {
+            // const cancellationCharges = data.finalAmount - data.totalAmount;
+            // alert(`Cancellation charges of $${cancellationCharges} have been deducted. The remaining amount will be refunded soon.`);
             fetchBookings();
         })
         .catch(error => {
@@ -142,6 +144,7 @@ document.addEventListener('DOMContentLoaded', function () {
             alert('Error canceling booking. Please try again later.');
         });
     };
+    
 
     extendBookingForm.addEventListener('submit', function (event) {
         event.preventDefault();
