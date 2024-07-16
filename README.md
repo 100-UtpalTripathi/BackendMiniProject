@@ -49,10 +49,7 @@ The Car Booking App is a web application that allows admins to manage cars, citi
     ```
 
 2. **Install dependencies**:
-    ```bash
-    # For frontend
-    npm install
-    
+    ```
     # For backend
     dotnet restore
     ```
@@ -64,7 +61,7 @@ The Car Booking App is a web application that allows admins to manage cars, citi
 4. **Run the application**:
     ```bash
     # For frontend
-    npm start
+    run index.html
     
     # For backend
     dotnet run
