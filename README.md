@@ -44,7 +44,7 @@ The Car Booking App is a web application that allows admins to manage cars, citi
 ## Setup
 1. **Clone the repository**:
     ```bash
-    git clone https://github.com/your-username/car-booking-app.git
+    git clone https://github.com/100-UtpalTripathi/BackendMiniProject.git
     cd car-booking-app
     ```
 
